@@ -1,68 +1,88 @@
+import 'dart:async';
+
+import 'package:firebase_crashlytics/firebase_crashlytics.dart';
+import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/material.dart';
+import 'package:firebase_core/firebase_core.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:pre_proyecto_universales/bloc/global_bloc.dart';
+import 'package:pre_proyecto_universales/pages/login_pages/login_form.dart';
 
 void main() {
-  runApp(const MyApp());
+  runZonedGuarded(
+      () => runApp(
+            MultiBlocProvider(
+              providers: [
+                BlocProvider(
+                  create: (context) => GlobalBloc(),
+                  child: Container(),
+                )
+              ],
+              child: const MyApp(),
+            ),
+          ),
+      (error, stack) => FirebaseCrashlytics.instance.recordError(error, stack));
 }
 
-class MyApp extends StatelessWidget {
+class MyApp extends StatefulWidget {
   const MyApp({Key? key}) : super(key: key);
 
-  // This widget is the root of your application.
+  static final ValueNotifier<ThemeMode> themeNotifier =
+      ValueNotifier(ThemeMode.system);
+
+  @override
+  State<StatefulWidget> createState() => _MyAppState();
+}
+
+class _MyAppState extends State<MyApp> {
+  late Future<void> _firebase;
+
+  Future<void> inicializarFirebase() async {
+    await Firebase.initializeApp();
+    await _inicializarCrashlytics();
+    //await _inicializarRealtimeDatabase();
+  }
+
+  Future<void> _inicializarCrashlytics() async {
+    await FirebaseCrashlytics.instance.setCrashlyticsCollectionEnabled(true);
+
+    Function onOriginalError = FlutterError.onError as Function;
+    FlutterError.onError = (FlutterErrorDetails detallesDeError) async {
+      await FirebaseCrashlytics.instance.recordFlutterError(detallesDeError);
+      onOriginalError(detallesDeError);
+    };
+  }
+
+  Future<void> _inicializarRealtimeDatabase() async {
+    // DatabaseReference ref = FirebaseDatabase.instance.ref("modo");
+    // ref.onValue.listen(
+    //   (DatabaseEvent event) {
+    //     final data = event.snapshot.value;
+    //     print("LA DATA OBTENIDA ES: ${data}");
+    //     // if (data.toString() == "{modo: ThemeMode.light}") {
+    //     //   MyApp.themeNotifier.value = ThemeMode.light;
+    //     // } else {
+    //     //   MyApp.themeNotifier.value = ThemeMode.dark;
+    //     // }
+    //   },
+    // );
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    _firebase = inicializarFirebase();
+  }
+
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
+      debugShowCheckedModeBanner: false,
       title: 'Flutter Demo',
       theme: ThemeData(
         primarySwatch: Colors.blue,
       ),
-      home: const MyHomePage(title: 'Flutter Demo Home Page'),
-    );
-  }
-}
-
-class MyHomePage extends StatefulWidget {
-  const MyHomePage({Key? key, required this.title}) : super(key: key);
-
-  final String title;
-
-  @override
-  State<MyHomePage> createState() => _MyHomePageState();
-}
-
-class _MyHomePageState extends State<MyHomePage> {
-  int _counter = 0;
-
-  void _incrementCounter() {
-    setState(() {
-      _counter++;
-    });
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: Text(widget.title),
-      ),
-      body: Center(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: <Widget>[
-            const Text(
-              'You have pushed the button this many times:',
-            ),
-            Text(
-              '$_counter',
-              style: Theme.of(context).textTheme.headline4,
-            ),
-          ],
-        ),
-      ),
-      floatingActionButton: FloatingActionButton(
-        onPressed: _incrementCounter,
-        tooltip: 'Increment',
-        child: const Icon(Icons.add),
-      ), // This trailing comma makes auto-formatting nicer for build methods.
+      home: LoginForm(),
     );
   }
 }
