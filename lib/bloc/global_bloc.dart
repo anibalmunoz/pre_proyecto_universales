@@ -5,9 +5,13 @@ part 'global_event.dart';
 part 'global_state.dart';
 
 class GlobalBloc extends Bloc<GlobalEvent, GlobalState> {
-  GlobalBloc() : super(GlobalInitial()) {
-    on<GlobalEvent>((event, emit) {
-      // TODO: implement event handler
+  GlobalBloc() : super(AppStarted()) {
+    on<DeslogueadoEvent>((event, emit) {
+      emit(UsuarioDeslogueadoState(isLogueado: false));
+    });
+
+    on<LogueadoEvent>((event, emit) {
+      emit(UsuarioDeslogueadoState(isLogueado: true));
     });
   }
 }

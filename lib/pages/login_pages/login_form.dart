@@ -1,6 +1,10 @@
-import 'package:firebase_crashlytics/firebase_crashlytics.dart';
 import 'package:flutter/material.dart';
-import 'package:pre_proyecto_universales/main.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:pre_proyecto_universales/bloc/global_bloc.dart';
+import 'package:pre_proyecto_universales/util/app_color.dart';
+import 'package:pre_proyecto_universales/util/app_style.dart';
+import 'package:pre_proyecto_universales/widgets/button_personal.dart';
+import 'package:pre_proyecto_universales/widgets/widget_logo.dart';
 
 class LoginForm extends StatefulWidget {
   LoginForm({Key? key}) : super(key: key);
@@ -10,12 +14,16 @@ class LoginForm extends StatefulWidget {
 }
 
 class _LoginFormState extends State<LoginForm> {
+  static GlobalBloc? basicBloc;
+
   @override
   Widget build(BuildContext context) {
+    basicBloc = BlocProvider.of<GlobalBloc>(context);
+
+    final isDark = MediaQuery.of(context).platformBrightness == Brightness.dark;
+
     final estiloBoton = ElevatedButton.styleFrom(
-      primary: MyApp.themeNotifier.value == ThemeMode.light
-          ? Color.fromARGB(255, 41, 106, 202)
-          : Colors.teal,
+      primary: isDark ? AppColor.shared.turquezaOscuro : Colors.teal[400],
       onPrimary: Colors.white,
       visualDensity: VisualDensity.adaptivePlatformDensity,
     );
@@ -27,15 +35,16 @@ class _LoginFormState extends State<LoginForm> {
             child: Form(
               //key:_keyForm,
               child: Column(
-                mainAxisAlignment: MainAxisAlignment.start,
+                mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  Icon(
-                    Icons.login_sharp,
-                    color: MyApp.themeNotifier.value == ThemeMode.light
-                        ? Colors.blue
-                        : Colors.blueAccent,
-                    size: 150.0,
-                  ),
+                  Logo(height: MediaQuery.of(context).size.height * .25),
+                  Container(
+                      margin: const EdgeInsets.symmetric(horizontal: 10),
+                      child: Text(
+                        'Bienvenido a nuestra app de Chat ¡Conectate con nosotros!',
+                        textAlign: TextAlign.center,
+                        style: AppStyle.shared.fonts.LoginIntroduction(context),
+                      )),
                   Container(
                     width: double.infinity,
                     padding: const EdgeInsets.all(20.0),
@@ -93,36 +102,25 @@ class _LoginFormState extends State<LoginForm> {
                           // },
                           obscureText: true,
                           keyboardType: TextInputType.visiblePassword,
-                          decoration: InputDecoration(
-                            icon: const Icon(Icons.password_outlined),
-                            // labelText: localizations.dictionary(
-                            //     Strings.textFieldContrasena),
+                          decoration: const InputDecoration(
+                            icon: Icon(Icons.password_outlined),
+                            labelText: 'Contraseña',
                             helperText: "Aa@45678",
-                            border: const OutlineInputBorder(),
+                            border: OutlineInputBorder(),
                             isDense: false,
-                            contentPadding: const EdgeInsets.all(10),
+                            contentPadding: EdgeInsets.all(10),
                           ),
                         ),
                         const SizedBox(height: 20),
                         Container(
-                          width: double.infinity,
-                          alignment: Alignment.center,
-                          child: ElevatedButton(
-                            style: estiloBoton,
-                            onPressed: () async {
-                              // if (_keyForm.currentState!
-                              //     .validate()) {
-                              //   bool logueado =
-                              //       await login(context, false);
-                              //   //agregarUbicacion();
-                              //   if (logueado) {
-                              //     agregarUbicacion();
-                              //     basicBloc!.add(LogueadoEvent());
-                              //   }
-                              // }
-                            },
-                            child: Text('Ingresar'),
-                          ),
+                          alignment: Alignment.bottomCenter,
+                          child: ButtonPersonal(
+                              ancho: 100,
+                              alto: 50,
+                              texto: 'Ingresar',
+                              onPressed: () {
+                                basicBloc!.add(LogueadoEvent());
+                              }),
                         ),
                         const SizedBox(height: 20),
                         const SizedBox(height: 20),
