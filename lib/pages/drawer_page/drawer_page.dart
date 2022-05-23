@@ -2,13 +2,16 @@ import 'package:flutter/material.dart';
 import 'package:pre_proyecto_universales/bloc/global_bloc.dart';
 import 'package:pre_proyecto_universales/localization/localizations.dart';
 import 'package:pre_proyecto_universales/main.dart';
+import 'package:pre_proyecto_universales/models/user_model.dart';
 import 'package:pre_proyecto_universales/pages/settings_page/settings_page.dart';
+import 'package:pre_proyecto_universales/repository/auth_service.dart';
 import 'package:pre_proyecto_universales/util/app_string.dart';
 import 'package:pre_proyecto_universales/util/app_style.dart';
+import 'package:pre_proyecto_universales/widgets/user_info.dart';
+import 'package:provider/provider.dart';
 
 class DrawerPage extends StatefulWidget {
   late GlobalBloc globalBloc;
-  late String idiomaBox;
 
   String? vista = MyApp.idioma;
 
@@ -19,27 +22,32 @@ class DrawerPage extends StatefulWidget {
 }
 
 class _DrawerPageState extends State<DrawerPage> {
+  Usuario? user;
+
   @override
   Widget build(BuildContext context) {
+    final authService = Provider.of<AuthService>(context);
     AppLocalizations localizations =
         Localizations.of<AppLocalizations>(context, AppLocalizations)!;
 
-    widget.idiomaBox = localizations.dictionary(Strings.dispositivo);
-
-    var listaIdiomas = [widget.idiomaBox, "Español", "English"];
+    Usuario user = authService.getUsuario();
 
     return SingleChildScrollView(
       child: Column(
         children: [
-          InkWell(
-            onTap: () {
-              Navigator.push(
-                context,
-                MaterialPageRoute(builder: (context) => SettingsPage()),
-              );
-            },
-            child: Container(
-              margin: const EdgeInsets.only(top: 300, left: 10),
+          Container(
+              margin: const EdgeInsets.only(top: 30),
+              child: UserInfo(user: user)),
+          Container(
+            margin: const EdgeInsets.only(top: 100, left: 10),
+            child: InkWell(
+              onTap: () {
+                Navigator.pop(context);
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(builder: (context) => SettingsPage()),
+                );
+              },
               child: Row(
                 children: [
                   const Icon(Icons.settings),
@@ -47,7 +55,7 @@ class _DrawerPageState extends State<DrawerPage> {
                     width: 15,
                   ),
                   Text(
-                    'Ajustes',
+                    localizations.dictionary(Strings.textAjustes),
                     style: AppStyle.shared.fonts.settingsText(context),
                   ),
                 ],

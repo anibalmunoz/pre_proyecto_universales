@@ -10,6 +10,10 @@ import 'package:pre_proyecto_universales/localization/localizations.dart';
 import 'package:pre_proyecto_universales/pages/loading_page/loading_screen.dart';
 import 'package:pre_proyecto_universales/pages/login_pages/login_form.dart';
 import 'package:pre_proyecto_universales/pages/splash_page/splash_page.dart';
+import 'package:pre_proyecto_universales/providers/theme_provider.dart';
+import 'package:pre_proyecto_universales/repository/auth_service.dart';
+import 'package:pre_proyecto_universales/wrapper.dart';
+import 'package:provider/provider.dart';
 
 import 'package:shared_preferences/shared_preferences.dart';
 
@@ -116,23 +120,30 @@ class _MyAppState extends State<MyApp> {
           return ValueListenableBuilder<ThemeMode>(
             valueListenable: MyApp.themeNotifier,
             builder: (_, ThemeMode currentMode, __) {
-              return MaterialApp(
-                supportedLocales: const [
-                  Locale('es'),
-                  Locale('en'),
+              return MultiProvider(
+                providers: [
+                  Provider<AuthService>(
+                    create: (_) => AuthService(),
+                  )
                 ],
-                localizationsDelegates: const [
-                  AppLocalizations.delegate,
-                  GlobalWidgetsLocalizations.delegate,
-                  GlobalMaterialLocalizations.delegate,
-                  GlobalCupertinoLocalizations.delegate,
-                ],
-                debugShowCheckedModeBanner: false,
-                title: 'Flutter Demo',
-                themeMode: currentMode,
-                theme: ThemeData.light(), //MyThemes.lightTheme,
-                darkTheme: ThemeData.dark(), //MyThemes.darkTheme,
-                home: const LoadingScreen(),
+                child: MaterialApp(
+                  supportedLocales: const [
+                    Locale('es'),
+                    Locale('en'),
+                  ],
+                  localizationsDelegates: const [
+                    AppLocalizations.delegate,
+                    GlobalWidgetsLocalizations.delegate,
+                    GlobalMaterialLocalizations.delegate,
+                    GlobalCupertinoLocalizations.delegate,
+                  ],
+                  debugShowCheckedModeBanner: false,
+                  title: 'Flutter Demo',
+                  themeMode: currentMode,
+                  theme: ThemeData.light(), //MyThemes.lightTheme,
+                  darkTheme: ThemeData.dark(), // MyThemes.darkTheme,
+                  home: const Wrapper(),
+                ),
               );
             },
           );

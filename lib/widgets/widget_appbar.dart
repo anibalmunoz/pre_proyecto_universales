@@ -13,8 +13,13 @@ PreferredSizeWidget getCustomAppbar(
   VoidCallback? onPressed,
   String contentButton = '',
 }) {
-  final isDark = MediaQuery.of(context).platformBrightness == Brightness.dark ||
-      MyApp.themeNotifier.value == ThemeMode.dark;
+  final isDark =
+      (MediaQuery.of(context).platformBrightness == Brightness.light &&
+              MyApp.themeNotifier.value == ThemeMode.dark) ||
+          ((MediaQuery.of(context).platformBrightness == Brightness.dark &&
+                  MyApp.themeNotifier.value == ThemeMode.system) ||
+              (MediaQuery.of(context).platformBrightness == Brightness.dark &&
+                  MyApp.themeNotifier.value == ThemeMode.dark));
 
   return AppBar(
     centerTitle: centerTitle,

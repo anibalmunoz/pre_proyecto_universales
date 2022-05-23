@@ -9,8 +9,12 @@ class FABPersonal extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final isDark =
-        MediaQuery.of(context).platformBrightness == Brightness.dark ||
-            MyApp.themeNotifier.value == ThemeMode.dark;
+        (MediaQuery.of(context).platformBrightness == Brightness.light &&
+                MyApp.themeNotifier.value == ThemeMode.dark) ||
+            ((MediaQuery.of(context).platformBrightness == Brightness.dark &&
+                    MyApp.themeNotifier.value == ThemeMode.system) ||
+                (MediaQuery.of(context).platformBrightness == Brightness.dark &&
+                    MyApp.themeNotifier.value == ThemeMode.dark));
 
     return FloatingActionButton(
       backgroundColor: isDark

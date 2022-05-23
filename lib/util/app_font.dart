@@ -1,12 +1,16 @@
 import 'package:flutter/material.dart';
-import 'package:pre_proyecto_universales/util/app_color.dart';
+import 'package:pre_proyecto_universales/main.dart';
 
 class AppFont {
   static const _fontWorkSans = 'WorkSans';
   static const lato = 'lato';
 
   TextStyle LoginIntroduction(BuildContext context) {
-    final isDark = MediaQuery.of(context).platformBrightness == Brightness.dark;
+    final isDark =
+        (MediaQuery.of(context).platformBrightness == Brightness.light &&
+                MyApp.themeNotifier.value == ThemeMode.dark) ||
+            ((MediaQuery.of(context).platformBrightness == Brightness.dark &&
+                MyApp.themeNotifier.value == ThemeMode.system));
     return TextStyle(
         fontSize: 25,
         color: isDark ? Colors.white : Colors.black,
@@ -15,14 +19,17 @@ class AppFont {
   }
 
   TextStyle settingsText(BuildContext context) {
-    final isDark = MediaQuery.of(context).platformBrightness == Brightness.dark;
-    return TextStyle(
+    final isDark =
+        (MediaQuery.of(context).platformBrightness == Brightness.light &&
+                MyApp.themeNotifier.value == ThemeMode.dark) ||
+            ((MediaQuery.of(context).platformBrightness == Brightness.dark &&
+                MyApp.themeNotifier.value == ThemeMode.system));
+    return const TextStyle(
       fontSize: 20,
-      // color: isDark
-      //     ? AppColor.shared.turquezaOscuro
-      //     : AppColor.shared.turquezaClaro,
-      // fontFamily: _fontWorkSans,
-      // fontWeight: FontWeight.w700
     );
+  }
+
+  TextStyle inputText(BuildContext context) {
+    return const TextStyle(fontSize: 18, fontFamily: lato);
   }
 }

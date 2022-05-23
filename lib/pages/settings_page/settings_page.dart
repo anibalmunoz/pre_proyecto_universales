@@ -3,8 +3,10 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:pre_proyecto_universales/bloc/global_bloc.dart';
 import 'package:pre_proyecto_universales/localization/localizations.dart';
 import 'package:pre_proyecto_universales/main.dart';
+import 'package:pre_proyecto_universales/repository/auth_service.dart';
 import 'package:pre_proyecto_universales/util/app_string.dart';
 import 'package:pre_proyecto_universales/widgets/widget_appbar.dart';
+import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class SettingsPage extends StatefulWidget {
@@ -38,6 +40,8 @@ class _SettingsPageState extends State<SettingsPage> {
     widget.idiomaBox = localizations.dictionary(Strings.dispositivo);
     widget.temaBox = localizations.dictionary(Strings.dispositivo);
 
+    final authService = Provider.of<AuthService>(context);
+
     var listaIdiomas = [widget.idiomaBox, "Español", "English"];
     var listaTemas = [
       widget.temaBox,
@@ -46,7 +50,8 @@ class _SettingsPageState extends State<SettingsPage> {
     ];
 
     return Scaffold(
-      appBar: getCustomAppbar(context, title: 'Ajustes'),
+      appBar: getCustomAppbar(context,
+          title: localizations.dictionary(Strings.textAjustes)),
       body: SingleChildScrollView(
         child: Column(
           children: [
@@ -168,9 +173,10 @@ class _SettingsPageState extends State<SettingsPage> {
                 Container(
                   margin: const EdgeInsets.only(left: 15.0, top: 55),
                   child: IconButton(
-                    onPressed: () {
+                    onPressed: () async {
+                      // widget.basicBloc.add(DeslogueadoEvent());
+                      await authService.signOut();
                       Navigator.pop(context);
-                      widget.basicBloc.add(DeslogueadoEvent());
                     },
                     icon: const Icon(
                       Icons.logout,
