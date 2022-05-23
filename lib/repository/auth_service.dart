@@ -4,11 +4,10 @@ import 'package:flutter/cupertino.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 import 'package:pre_proyecto_universales/models/user_model.dart';
 import 'package:flutter_facebook_auth/flutter_facebook_auth.dart';
+import 'package:twitter_login/twitter_login.dart';
 
 class AuthService {
   final FirebaseAuth _firebaseAuth = FirebaseAuth.instance;
-  late String mailFacebook;
-  late String fotoFacebook;
 
   Usuario? _userFromFirebase(User? user) {
     if (user == null) {
@@ -67,7 +66,7 @@ class AuthService {
     return await _firebaseAuth.signOut();
   }
 
-  //sigin with google
+  /* GOOGLE */
 
   final googleSignIn = GoogleSignIn();
 
@@ -98,8 +97,6 @@ class AuthService {
     }
   }
 
-//fin sigin whith google
-
 /*FACEBOOK */
 
   Future/*<UserCredential>*/ signInWithFacebook() async {
@@ -107,30 +104,41 @@ class AuthService {
       // Trigger the sign-in flow
       final LoginResult loginResult = await FacebookAuth.instance.login();
 
-      // Create a credential from the access token
-      final OAuthCredential facebookAuthCredential =
-          FacebookAuthProvider.credential(loginResult.accessToken!.token);
+      if (loginResult.accessToken != null) {
+        // Create a credential from the access token
+        final OAuthCredential facebookAuthCredential =
+            FacebookAuthProvider.credential(loginResult.accessToken!.token);
 
-      final userData = await FacebookAuth.instance.getUserData();
+        return _firebaseAuth.signInWithCredential(facebookAuthCredential);
+      }
+    } on FirebaseAuthException catch (e) {
+      print(e);
+    }
+  }
 
-      mailFacebook = userData["email"];
-      //fotoFacebook = userData['public_profile'];
+  /* TWITTER */
 
-      // /**/
-      // final credential = await _firebaseAuth.(
-      //       email: email, password: password);
-      //   return _userFromFirebase(credential.user);
-      // /* */
+  Future/*<UserCredential>*/ signInWithTwitter() async {
+    try {
+      final twitterLogin = TwitterLogin(
+          apiKey: 'H31JlrCMKPuRIHXJCAdcLu0Ts',
+          apiSecretKey: 'rVVC37WNZ90XvihipgJDcCwE0O7BjxwxcVfPZyCePtlUIb71jM',
+          redirectURI: 'flutter-twitter-login://');
 
-      // Once signed in, return the UserCredential
-      return _firebaseAuth.signInWithCredential(facebookAuthCredential);
+      twitterLogin.login().then(
+        (value) async {
+          final twitterAuthCredential = TwitterAuthProvider.credential(
+              accessToken: value.authToken!, secret: value.authTokenSecret!);
+
+          await _firebaseAuth.signInWithCredential(twitterAuthCredential);
+        },
+      );
     } on FirebaseAuthException catch (e) {
       print(e);
     }
   }
 
 /* */
-
   mostrarFlushbarCorreoYaUtilizado(
       context, String title, String message) async {
     Flushbar(

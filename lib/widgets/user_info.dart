@@ -48,7 +48,6 @@ class UserInfo extends StatelessWidget {
                       user.name!,
                       style: TextStyle(
                         fontSize: 15.0,
-                        fontWeight: FontWeight.bold,
                         color: isDark ? Colors.white : Colors.black,
                         fontFamily: 'Lato',
                       ),
@@ -61,11 +60,16 @@ class UserInfo extends StatelessWidget {
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
             Flexible(
-              child: Text(user.email!,
-                  style: TextStyle(
-                      fontSize: 15.0,
-                      color: isDark ? Colors.white : Colors.black,
-                      fontFamily: 'Lato')),
+              child: user.email != null
+                  ? Text(
+                      user.email!,
+                      style: TextStyle(
+                        fontSize: 15.0,
+                        color: isDark ? Colors.white : Colors.black,
+                        fontFamily: 'Lato',
+                      ),
+                    )
+                  : const Text(''),
             ),
           ],
         ),

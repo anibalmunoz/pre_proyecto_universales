@@ -22,4 +22,18 @@ enum Strings {
   textRegistrate,
   textConfirmarContrasena,
   textContrasenaNoCoincide,
+  textCredencialesInvalidas,
+  verifiqueHuella,
+  botonCancelar,
+  dialogSugerenciaIngresar,
+  save,
+  noHayCredencialesAlmacenadas,
+  ingresaUsuarioYContrasena,
+  noTienesHuella,
+  configuraHuella,
+  lectorSolicitudIdentificarse,
+  flushbarBloqueoLectorTemporalTitulo,
+  flushbarBloqueoLectorTemporalMensaje,
+  flushbarBloqueoLectorPermanenteTitulo,
+  flushbarBloqueoLectorPermanenteMensaje
 }

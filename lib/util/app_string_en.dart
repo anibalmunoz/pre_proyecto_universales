@@ -28,4 +28,24 @@ const Map<Strings, String> dictionary_en = {
   Strings.textRegistrate: "Sign up",
   Strings.textConfirmarContrasena: "Confirm your password",
   Strings.textContrasenaNoCoincide: "Passwords do not match",
+  Strings.textCredencialesInvalidas: "Invalid credentials",
+  Strings.verifiqueHuella: "Please check your fingerprint",
+  Strings.botonCancelar: "Cancel",
+  Strings.dialogSugerenciaIngresar:
+      "Do you want to save your data to start quickly next time?",
+  Strings.save: "Save",
+  Strings.noHayCredencialesAlmacenadas: "No credentials",
+  Strings.ingresaUsuarioYContrasena: "Enter username and password",
+  Strings.noTienesHuella: "Does not have a registered fingerprint",
+  Strings.configuraHuella: "Set up a fingerprint to use this option",
+  Strings.lectorSolicitudIdentificarse: "Please identify yourself",
+  Strings.flushbarBloqueoLectorTemporalTitulo:
+      "Fingerprint reader temporarily blocked",
+  Strings.flushbarBloqueoLectorTemporalMensaje:
+      "Wait a few moment to try again",
+  Strings.flushbarBloqueoLectorPermanenteTitulo:
+      "Fingerprint reader locked for security",
+  Strings.flushbarBloqueoLectorPermanenteMensaje:
+      "The fingerprint reader is permanently blocked, "
+          "it will be unlocked until you reboot your phone with pattern or PIN",
 };

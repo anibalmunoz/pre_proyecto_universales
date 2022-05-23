@@ -49,6 +49,8 @@ dependencies:
   another_flushbar: ^1.10.29
   google_sign_in: ^5.3.1
   flutter_facebook_auth: ^4.3.4
+  twitter_login: ^4.2.3
+  local_auth: ^2.1.0
   
 
 dev_dependencies:

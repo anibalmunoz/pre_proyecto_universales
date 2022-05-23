@@ -30,13 +30,11 @@ class AppLocalizationsDelegate extends LocalizationsDelegate<AppLocalizations> {
 
   @override
   bool isSupported(Locale locale) {
-    print("IS SUPORTED = ${locale.languageCode}");
     return ['es', 'en'].contains(locale.languageCode);
   }
 
   @override
   Future<AppLocalizations> load(Locale locale) async {
-    print("EL LOCALE ES: ${locale.languageCode}");
     return AppLocalizations(locale);
   }
 

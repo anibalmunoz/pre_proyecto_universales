@@ -31,7 +31,7 @@ PreferredSizeWidget getCustomAppbar(
     ),
     backgroundColor:
         isDark ? AppColor.shared.turquezaOscuro : AppColor.shared.turquezaClaro,
-    elevation: elevation,
+    //elevation: elevation,
     actions: centerTitle
         ? showButton
             ? [

@@ -1,4 +1,6 @@
+import 'package:another_flushbar/flushbar.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:pre_proyecto_universales/bloc/global_bloc.dart';
@@ -6,8 +8,8 @@ import 'package:pre_proyecto_universales/localization/localizations.dart';
 import 'package:pre_proyecto_universales/main.dart';
 import 'package:pre_proyecto_universales/models/user_model.dart';
 import 'package:pre_proyecto_universales/pages/sign_up_page/sign_up.dart';
+import 'package:pre_proyecto_universales/providers/fingerprint.dart';
 import 'package:pre_proyecto_universales/repository/auth_service.dart';
-import 'package:pre_proyecto_universales/util/app_color.dart';
 import 'package:pre_proyecto_universales/util/app_string.dart';
 import 'package:pre_proyecto_universales/util/app_style.dart';
 import 'package:pre_proyecto_universales/widgets/button_personal.dart';
@@ -15,6 +17,8 @@ import 'package:pre_proyecto_universales/widgets/gradient_back.dart';
 import 'package:pre_proyecto_universales/widgets/widget_input_text.dart';
 import 'package:pre_proyecto_universales/widgets/widget_logo.dart';
 import 'package:provider/provider.dart';
+import 'package:local_auth_android/local_auth_android.dart';
+import 'package:local_auth/local_auth.dart';
 
 class LoginForm extends StatefulWidget {
   LoginForm({Key? key}) : super(key: key);
@@ -32,6 +36,7 @@ class _LoginFormState extends State<LoginForm> {
   @override
   Widget build(BuildContext context) {
     final authService = Provider.of<AuthService>(context);
+
     globalBloc = BlocProvider.of<GlobalBloc>(context);
     AppLocalizations localizations =
         Localizations.of<AppLocalizations>(context, AppLocalizations)!;
@@ -73,16 +78,10 @@ class _LoginFormState extends State<LoginForm> {
                               keyboardType: TextInputType.emailAddress,
                               controller: correoController,
                               validator: (valor) {
-                                //client.correo = valor;
                                 if (valor!.isEmpty) {
                                   return localizations
                                       .dictionary(Strings.textCorreoVacio);
                                 }
-                                // if (!valor.isValidEmail) {
-                                //   return localizations
-                                //       .dictionary(Strings.correoInvalido);
-                                // }
-
                                 return null;
                               },
                             ),
@@ -97,17 +96,10 @@ class _LoginFormState extends State<LoginForm> {
                                     .dictionary(Strings.textContrasena),
                                 controller: contrasenaController,
                                 validator: (valor) {
-                                  // client.contrasena = valor;
                                   if (valor!.isEmpty) {
                                     return localizations
                                         .dictionary(Strings.textCampoVacio);
                                   }
-                                  // if (!valor.isValidPassword) {
-                                  //   return localizations.dictionary(
-                                  //       Strings
-                                  //           .contrasenaInvalidaDebeTener);
-                                  // }
-
                                   return null;
                                 },
                                 keyboardType: TextInputType.visiblePassword),
@@ -126,14 +118,19 @@ class _LoginFormState extends State<LoginForm> {
                                             correoController.text,
                                             contrasenaController.text);
                                     if (usuario == null) {
-                                      showDialog(
-                                        context: context,
-                                        builder: (context) => const AlertDialog(
-                                          title: Text("Error"),
-                                          content:
-                                              Text('credenciales inválidas'),
-                                        ),
-                                      );
+                                      // ignore: use_build_context_synchronously
+                                      mostrarDialogoCredencialesInvalidas(
+                                          context);
+                                    } else {
+                                      // ignore: use_build_context_synchronously
+                                      bool guardar = await Fingerprint
+                                          .consultarGuardarCredenciales(
+                                              context);
+                                      if (guardar) {
+                                        Fingerprint.guardarEnSharedPreferences(
+                                            correoController.text,
+                                            contrasenaController.text);
+                                      }
                                     }
                                   }
                                 }),
@@ -164,7 +161,7 @@ class _LoginFormState extends State<LoginForm> {
                                     ),
                                     onPressed: () async {
                                       await authService.signOut();
-                                      authService.googleLogin();
+                                      await authService.googleLogin();
                                     },
                                   ),
                                   const SizedBox(width: 10),
@@ -172,13 +169,16 @@ class _LoginFormState extends State<LoginForm> {
                                     icon: const Icon(FontAwesomeIcons.facebook),
                                     onPressed: () async {
                                       await authService.signOut();
-                                      authService.signInWithFacebook();
+                                      await authService.signInWithFacebook();
                                     },
                                   ),
                                   const SizedBox(width: 10),
                                   IconButton(
                                     icon: const Icon(FontAwesomeIcons.twitter),
-                                    onPressed: () {},
+                                    onPressed: () async {
+                                      await authService.signOut();
+                                      await authService.signInWithTwitter();
+                                    },
                                   ),
                                 ]),
                             const SizedBox(height: 20),
@@ -186,30 +186,42 @@ class _LoginFormState extends State<LoginForm> {
                               child: Column(children: [
                                 IconButton(
                                     onPressed: () async {
-                                      // await verificarDisponibilidadHuellas();
-
-                                      // await asignarDesdeSharedPreferences();
-
-                                      // if (correoPrefs !=
-                                      //         null &&
-                                      //     correoPrefs !=
-                                      //         "null" &&
-                                      //     isBiometricAvailable &&
-                                      //     hayHuellaDisponible) {
-                                      //   await mostrarSugerenciaLogin(
-                                      //       context);
-                                      // } else if (correoPrefs ==
-                                      //         null ||
-                                      //     correoPrefs ==
-                                      //         "null") {
-                                      //   mostrarFlushbarNoCredencialesGuardadas(
-                                      //       context);
-                                      // } else {
-                                      //   mostrarFlushbarProblemasFingerprint(
-                                      //       context);
-                                      // }
-                                      // // mostrarSugerenciaLogin(
-                                      // //     context);
+                                      await Fingerprint
+                                          .verificarDisponibilidadHuellas();
+                                      await Fingerprint
+                                          .asignarCredencialesDesdeSharedPreferences();
+                                      if (Fingerprint.correoPrefs != null &&
+                                          Fingerprint.correoPrefs != "null" &&
+                                          Fingerprint.isBiometricAvailable &&
+                                          Fingerprint.hayHuellaDisponible) {
+                                        bool autenticado =
+                                            // ignore: use_build_context_synchronously
+                                            await fingerprintLogin(context);
+                                        if (autenticado) {
+                                          authService
+                                              .signInWithEmailAndPassword(
+                                                  Fingerprint.correoPrefs!,
+                                                  Fingerprint.contrasenaPrefs!);
+                                        }
+                                      } else if (Fingerprint.correoPrefs ==
+                                              null ||
+                                          Fingerprint.correoPrefs == "null") {
+                                        // ignore: use_build_context_synchronously
+                                        mostrarFlushBar(
+                                            context,
+                                            localizations.dictionary(Strings
+                                                .noHayCredencialesAlmacenadas),
+                                            localizations.dictionary(Strings
+                                                .ingresaUsuarioYContrasena));
+                                      } else {
+                                        // ignore: use_build_context_synchronously
+                                        mostrarFlushBar(
+                                            context,
+                                            localizations.dictionary(
+                                                Strings.noTienesHuella),
+                                            localizations.dictionary(
+                                                Strings.configuraHuella));
+                                      }
                                     },
                                     icon: const Icon(Icons.fingerprint)),
                                 Text(
@@ -230,5 +242,97 @@ class _LoginFormState extends State<LoginForm> {
         ],
       ),
     );
+  }
+
+  mostrarDialogoCredencialesInvalidas(context) {
+    AppLocalizations localizations =
+        Localizations.of<AppLocalizations>(context, AppLocalizations)!;
+    showDialog(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: const Text("Error"),
+        content:
+            Text(localizations.dictionary(Strings.textCredencialesInvalidas)),
+      ),
+    );
+  }
+
+  mostrarFlushBar(context, String tittle, String message) {
+    final isDark =
+        (MediaQuery.of(context).platformBrightness == Brightness.light &&
+                MyApp.themeNotifier.value == ThemeMode.dark) ||
+            ((MediaQuery.of(context).platformBrightness == Brightness.dark &&
+                    MyApp.themeNotifier.value == ThemeMode.system) ||
+                (MediaQuery.of(context).platformBrightness == Brightness.dark &&
+                    MyApp.themeNotifier.value == ThemeMode.dark));
+    Flushbar(
+      title: tittle,
+      message: message,
+      duration: const Duration(seconds: 3),
+      margin: const EdgeInsets.only(top: 8, bottom: 55.0, left: 8, right: 8),
+      borderRadius: BorderRadius.circular(8),
+      backgroundColor: isDark ? Colors.black54 : Colors.teal[500]!,
+    ).show(context);
+  }
+
+  Future<bool> fingerprintLogin(context) async {
+    LocalAuthentication localAuth = LocalAuthentication();
+    AppLocalizations localizations =
+        Localizations.of<AppLocalizations>(context, AppLocalizations)!;
+
+    try {
+      var androidStrings = AndroidAuthMessages(
+          signInTitle: localizations.dictionary(Strings.textIngresar),
+          biometricHint: localizations.dictionary(Strings.verifiqueHuella),
+          cancelButton: localizations.dictionary(Strings.botonCancelar),
+          biometricRequiredTitle: "",
+          deviceCredentialsSetupDescription: "",
+          //biometricNotRecognized: "No reconocida",
+          //biometricSuccess: "Huella reconocida",
+          deviceCredentialsRequiredTitle: "",
+          goToSettingsButton: "",
+          goToSettingsDescription: "");
+
+      //     // goToSettingsButton: 'settings',
+      //     // goToSettingsDescription:
+      //     //     'Please set up your Touch ID.',
+      //     // lockOut: 'Please reenable your Touch ID'
+      //     );
+
+      var didAuthenticate = await localAuth.authenticate(
+          authMessages: [androidStrings],
+          localizedReason:
+              localizations.dictionary(Strings.lectorSolicitudIdentificarse),
+          options: const AuthenticationOptions(
+            biometricOnly: true,
+            useErrorDialogs: false,
+            stickyAuth: false,
+          ));
+
+      if (didAuthenticate) {
+        return true;
+      } else {
+        return false;
+      }
+    } on PlatformException catch (e) {
+      if (e.code.toString() == "LockedOut") {
+        mostrarFlushBar(
+            context,
+            localizations
+                .dictionary(Strings.flushbarBloqueoLectorTemporalTitulo),
+            localizations
+                .dictionary(Strings.flushbarBloqueoLectorTemporalMensaje));
+      }
+      if (e.code.toString() == "PermanentlyLockedOut") {
+        mostrarFlushBar(
+            context,
+            localizations
+                .dictionary(Strings.flushbarBloqueoLectorPermanenteTitulo),
+            localizations
+                .dictionary(Strings.flushbarBloqueoLectorPermanenteMensaje));
+      }
+      print("${e.message}");
+      return false;
+    }
   }
 }

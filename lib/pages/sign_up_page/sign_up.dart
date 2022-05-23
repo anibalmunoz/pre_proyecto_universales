@@ -34,7 +34,8 @@ class _SignUpState extends State<SignUp> {
         Localizations.of<AppLocalizations>(context, AppLocalizations)!;
 
     return Scaffold(
-      appBar: getCustomAppbar(context, title: 'Registrate'),
+      appBar: getCustomAppbar(context,
+          title: localizations.dictionary(Strings.textRegistrate)),
       body: Center(
         child: SafeArea(
           child: SingleChildScrollView(
@@ -137,7 +138,7 @@ class _SignUpState extends State<SignUp> {
                         )
                       ],
                     ),
-                  )
+                  ),
                 ],
               ),
             ),

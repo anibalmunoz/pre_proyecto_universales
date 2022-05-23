@@ -29,4 +29,24 @@ const Map<Strings, String> dictionary_es = {
   Strings.textRegistrate: "Regístrate",
   Strings.textConfirmarContrasena: "Confirma tu contraseña",
   Strings.textContrasenaNoCoincide: "Las contraseñas no coinciden",
+  Strings.textCredencialesInvalidas: "Credenciales inválidas",
+  Strings.verifiqueHuella: "Por favor verifique su huella",
+  Strings.botonCancelar: "Cancelar",
+  Strings.dialogSugerenciaIngresar:
+      "¿Quieres guardar tus datos para iniciar rapidamente la próxima vez?",
+  Strings.save: "Guardar",
+  Strings.noHayCredencialesAlmacenadas: "No hay credenciales",
+  Strings.ingresaUsuarioYContrasena: "Ingresa usuario y contraseña manualmente",
+  Strings.noTienesHuella: "No tienes huella registrada",
+  Strings.configuraHuella: "Configura una huella para usar esta opción",
+  Strings.lectorSolicitudIdentificarse: "Por favor identifícate",
+  Strings.flushbarBloqueoLectorTemporalTitulo:
+      "Lector de huellas bloqueado temporalmente",
+  Strings.flushbarBloqueoLectorTemporalMensaje:
+      "Espera unos momentos para intentarlo nuevamente",
+  Strings.flushbarBloqueoLectorPermanenteTitulo:
+      "Lector de huellas bloqueado por seguridad",
+  Strings.flushbarBloqueoLectorPermanenteMensaje:
+      "El lector de huellas se bloqueó permanentemente, "
+          "se desbloqueará hasta que vuelvas a iniciar tu teléfono con patron o PIN",
 };

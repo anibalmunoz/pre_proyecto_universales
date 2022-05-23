@@ -57,6 +57,13 @@ packages:
       url: "https://pub.dartlang.org"
     source: hosted
     version: "1.16.0"
+  crypto:
+    dependency: transitive
+    description:
+      name: crypto
+      url: "https://pub.dartlang.org"
+    source: hosted
+    version: "3.0.2"
   cupertino_icons:
     dependency: "direct main"
     description:
@@ -214,6 +221,13 @@ packages:
     description: flutter
     source: sdk
     version: "0.0.0"
+  flutter_plugin_android_lifecycle:
+    dependency: transitive
+    description:
+      name: flutter_plugin_android_lifecycle
+      url: "https://pub.dartlang.org"
+    source: hosted
+    version: "2.0.6"
   flutter_test:
     dependency: "direct dev"
     description: flutter
@@ -266,6 +280,13 @@ packages:
       url: "https://pub.dartlang.org"
     source: hosted
     version: "0.10.1+2"
+  http:
+    dependency: transitive
+    description:
+      name: http
+      url: "https://pub.dartlang.org"
+    source: hosted
+    version: "0.13.4"
   http_parser:
     dependency: transitive
     description:
@@ -294,6 +315,41 @@ packages:
       url: "https://pub.dartlang.org"
     source: hosted
     version: "2.0.0"
+  local_auth:
+    dependency: "direct main"
+    description:
+      name: local_auth
+      url: "https://pub.dartlang.org"
+    source: hosted
+    version: "2.1.0"
+  local_auth_android:
+    dependency: transitive
+    description:
+      name: local_auth_android
+      url: "https://pub.dartlang.org"
+    source: hosted
+    version: "1.0.4"
+  local_auth_ios:
+    dependency: transitive
+    description:
+      name: local_auth_ios
+      url: "https://pub.dartlang.org"
+    source: hosted
+    version: "1.0.6"
+  local_auth_platform_interface:
+    dependency: transitive
+    description:
+      name: local_auth_platform_interface
+      url: "https://pub.dartlang.org"
+    source: hosted
+    version: "1.0.3"
+  local_auth_windows:
+    dependency: transitive
+    description:
+      name: local_auth_windows
+      url: "https://pub.dartlang.org"
+    source: hosted
+    version: "1.0.0"
   matcher:
     dependency: transitive
     description:
@@ -488,6 +544,13 @@ packages:
       url: "https://pub.dartlang.org"
     source: hosted
     version: "0.4.9"
+  twitter_login:
+    dependency: "direct main"
+    description:
+      name: twitter_login
+      url: "https://pub.dartlang.org"
+    source: hosted
+    version: "4.2.3"
   typed_data:
     dependency: transitive
     description:
