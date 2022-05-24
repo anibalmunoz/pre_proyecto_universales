@@ -31,8 +31,12 @@ class _SettingsPageState extends State<SettingsPage> {
     widget.basicBloc = BlocProvider.of<GlobalBloc>(context);
 
     final isDark =
-        MediaQuery.of(context).platformBrightness == Brightness.dark ||
-            MyApp.themeNotifier.value == ThemeMode.dark;
+        (MediaQuery.of(context).platformBrightness == Brightness.light &&
+                MyApp.themeNotifier.value == ThemeMode.dark) ||
+            ((MediaQuery.of(context).platformBrightness == Brightness.dark &&
+                    MyApp.themeNotifier.value == ThemeMode.system) ||
+                (MediaQuery.of(context).platformBrightness == Brightness.dark &&
+                    MyApp.themeNotifier.value == ThemeMode.dark));
 
     AppLocalizations localizations =
         Localizations.of<AppLocalizations>(context, AppLocalizations)!;

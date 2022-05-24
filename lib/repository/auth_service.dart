@@ -9,27 +9,27 @@ import 'package:twitter_login/twitter_login.dart';
 class AuthService {
   final FirebaseAuth _firebaseAuth = FirebaseAuth.instance;
 
-  Usuario? _userFromFirebase(User? user) {
+  UsuarioModel? _userFromFirebase(User? user) {
     if (user == null) {
       return null;
     }
 
-    return Usuario(
+    return UsuarioModel(
       uid: user.uid,
       email: user.email,
     );
   }
 
-  Stream<Usuario?>? get user {
+  Stream<UsuarioModel?>? get user {
     return _firebaseAuth.authStateChanges().map(_userFromFirebase);
   }
 
-  Usuario getUsuario() {
+  UsuarioModel getUsuario() {
     final User? user = _firebaseAuth.currentUser;
     // if (user != null) {
     print(user!.photoURL);
 
-    return Usuario(
+    return UsuarioModel(
       uid: user.uid,
       email: user.email,
       name: user.displayName,
@@ -37,7 +37,7 @@ class AuthService {
     );
   }
 
-  Future<Usuario?> signInWithEmailAndPassword(
+  Future<UsuarioModel?> signInWithEmailAndPassword(
       String email, String password) async {
     try {
       final credential = await _firebaseAuth.signInWithEmailAndPassword(
@@ -48,7 +48,7 @@ class AuthService {
     }
   }
 
-  Future<Usuario?> createUserWithEmailAndPassword(
+  Future<UsuarioModel?> createUserWithEmailAndPassword(
       context, String email, String password) async {
     try {
       final credential = await _firebaseAuth.createUserWithEmailAndPassword(

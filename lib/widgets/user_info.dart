@@ -4,7 +4,7 @@ import 'package:pre_proyecto_universales/main.dart';
 import 'package:pre_proyecto_universales/models/user_model.dart';
 
 class UserInfo extends StatelessWidget {
-  Usuario user;
+  UsuarioModel user;
   UserInfo({Key? key, required this.user}) : super(key: key);
 
   @override

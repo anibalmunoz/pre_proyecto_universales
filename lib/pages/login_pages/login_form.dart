@@ -113,7 +113,7 @@ class _LoginFormState extends State<LoginForm> {
                                 onPressed: () async {
                                   //globalBloc!.add(LogueadoEvent());
                                   if (_keyForm.currentState!.validate()) {
-                                    Usuario? usuario = await authService
+                                    UsuarioModel? usuario = await authService
                                         .signInWithEmailAndPassword(
                                             correoController.text,
                                             contrasenaController.text);

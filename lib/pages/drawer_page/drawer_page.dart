@@ -22,7 +22,7 @@ class DrawerPage extends StatefulWidget {
 }
 
 class _DrawerPageState extends State<DrawerPage> {
-  Usuario? user;
+  UsuarioModel? user;
 
   @override
   Widget build(BuildContext context) {
@@ -30,7 +30,7 @@ class _DrawerPageState extends State<DrawerPage> {
     AppLocalizations localizations =
         Localizations.of<AppLocalizations>(context, AppLocalizations)!;
 
-    Usuario user = authService.getUsuario();
+    UsuarioModel user = authService.getUsuario();
 
     return SingleChildScrollView(
       child: Column(
