@@ -20,7 +20,11 @@ class ChatService {
   //   );
   // }
 
-  Future<List<CanalModel>> buscarCanales() async {
+  DatabaseReference getCanales() {
+    return FirebaseDatabase.instance.ref("Canales");
+  }
+
+  Stream<List<CanalModel>> get buscarCanales async* {
     List<CanalModel> misCanales = [];
     try {
       final ref = FirebaseDatabase.instance.ref();
@@ -39,9 +43,9 @@ class ChatService {
       } else {
         print('No data available.');
       }
-      return misCanales;
+      yield misCanales;
     } catch (e) {
-      return misCanales;
+      yield misCanales;
     }
 
     // DatabaseReference ref = FirebaseDatabase.instance.ref().child("Canales").get();

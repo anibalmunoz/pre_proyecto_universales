@@ -1,3 +1,5 @@
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
 import 'package:pre_proyecto_universales/main.dart';
 import 'package:pre_proyecto_universales/models/channel_model.dart';
@@ -20,7 +22,7 @@ class Home extends StatefulWidget {
 
 class _HomeState extends State<Home> {
   UsuarioModel? user;
-  List<CanalModel> canales = [];
+  List<CanalModel> canalesLista = [];
 
   @override
   Widget build(BuildContext context) {
@@ -36,17 +38,50 @@ class _HomeState extends State<Home> {
           floatingActionButton: FABPersonal(
             onPressed: () {},
           ),
-          body: FutureBuilder(
-            future: ChatService.shared.buscarCanales(),
-            builder: (BuildContext context, snapshot) {
-              if (snapshot.hasData) {
-                canales = snapshot.requireData as List<CanalModel>;
-                print("SI HAY INFORMACIÓN");
-              } else {
-                print("NO HAY INFORMACIÓN");
-              }
+          body: StreamBuilder(
+            stream: ChatService.shared.getCanales().onValue,
+            builder: (BuildContext context, AsyncSnapshot snapshot) {
+              switch (snapshot.connectionState) {
+                case ConnectionState.active:
 
-              return buildChats();
+                case ConnectionState.done:
+                  if (snapshot.hasData) {
+                    Map<dynamic, dynamic> canales =
+                        snapshot.data.snapshot.value;
+
+                    canales.forEach((llave, valor) {
+                      Map<String, dynamic> data =
+                          json.decode(json.encode(valor));
+                      CanalModel canal = CanalModel.fromJson(data);
+                      canal.key = llave;
+
+                      if (canalesLista
+                          .where((element) => element.key == llave)
+                          .isEmpty) {
+                        canalesLista.add(
+                          CanalModel(
+                            key: llave,
+                            name: data["nombre"],
+                            descripcion: data["descripcion"],
+                          ),
+                        );
+                      }
+                      //print("LA DATA ES:   $llave");
+
+                      //print("EL NOMBRE DE CANAL ES: " + data["nombre"]);
+                    });
+
+                    print("SI HAY INFORMACIÓN");
+                    return buildChats();
+                  } else {
+                    print("NO HAY INFORMACIÓN");
+                  }
+
+                  return const Center(child: CircularProgressIndicator());
+
+                default:
+                  return const Center(child: CircularProgressIndicator());
+              }
             },
           ),
         );
@@ -56,11 +91,11 @@ class _HomeState extends State<Home> {
 
   Widget buildChats() => ListView.builder(
         physics: const BouncingScrollPhysics(),
-        itemCount: canales.length,
+        itemCount: canalesLista.length,
         itemBuilder: (context, index) {
-          final canal = canales[index];
+          final canal = canalesLista[index];
 
-          if (canales.isNotEmpty) {
+          if (canalesLista.isNotEmpty) {
             return Channel(
               titulo: canal.name!,
               descripcion: canal.descripcion!,
