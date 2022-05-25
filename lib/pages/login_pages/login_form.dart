@@ -130,6 +130,9 @@ class _LoginFormState extends State<LoginForm> {
                                         Fingerprint.guardarEnSharedPreferences(
                                             correoController.text,
                                             contrasenaController.text);
+                                      } else {
+                                        Fingerprint.suprimirSharedPreferences(
+                                            "null", "null");
                                       }
                                     }
                                   }

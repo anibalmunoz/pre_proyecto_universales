@@ -35,12 +35,21 @@ class Fingerprint {
     await prefs.setString("contrasena", contrasenaEncriptada.toString());
   }
 
+  static Future<void> suprimirSharedPreferences(correo, contrasena) async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    await prefs.setString("correo", correo);
+    await prefs.setString("contrasena", contrasena);
+  }
+
   static Future<void> asignarCredencialesDesdeSharedPreferences() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     correoPrefs = prefs.getString("correo");
     contrasenaPrefs = prefs.getString("contrasena");
 
-    if (correoPrefs != null && contrasenaPrefs != null) {
+    if (correoPrefs != null &&
+        correoPrefs != "null" &&
+        contrasenaPrefs != null &&
+        contrasenaPrefs != "null") {
       String correoDesencriptado = await desencriptar(correoPrefs);
       String contrasenaDesencriptada = await desencriptar(contrasenaPrefs);
 

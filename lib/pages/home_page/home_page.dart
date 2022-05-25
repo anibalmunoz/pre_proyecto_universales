@@ -1,12 +1,15 @@
 import 'package:flutter/material.dart';
 import 'package:pre_proyecto_universales/main.dart';
 import 'package:pre_proyecto_universales/models/channel_model.dart';
+import 'package:pre_proyecto_universales/models/user_model.dart';
 import 'package:pre_proyecto_universales/pages/chat_page/chat_page.dart';
 import 'package:pre_proyecto_universales/pages/drawer_page/drawer_page.dart';
+import 'package:pre_proyecto_universales/repository/auth_service.dart';
 import 'package:pre_proyecto_universales/repository/chat_service.dart';
 import 'package:pre_proyecto_universales/widgets/widget_appbar.dart';
 import 'package:pre_proyecto_universales/widgets/widget_canal.dart';
 import 'package:pre_proyecto_universales/widgets/widget_fab.dart';
+import 'package:provider/provider.dart';
 
 class Home extends StatefulWidget {
   Home({Key? key}) : super(key: key);
@@ -16,10 +19,14 @@ class Home extends StatefulWidget {
 }
 
 class _HomeState extends State<Home> {
+  UsuarioModel? user;
   List<CanalModel> canales = [];
 
   @override
   Widget build(BuildContext context) {
+    final authService = Provider.of<AuthService>(context);
+    user = authService.getUsuario();
+
     return ValueListenableBuilder(
       valueListenable: MyApp.themeNotifier,
       builder: (_, ThemeMode currentMode, __) {
@@ -56,9 +63,9 @@ class _HomeState extends State<Home> {
           if (canales.isNotEmpty) {
             return Channel(
               titulo: canal.name!,
-              descripcion: canal.description!,
+              descripcion: canal.descripcion!,
               onTap: () {
-                ChatService.shared.buscarCanales();
+                ChatService.shared.buscarMisCanales(user!.uid);
                 Navigator.push(
                   context,
                   MaterialPageRoute(

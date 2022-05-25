@@ -23,7 +23,7 @@ class _ChannelState extends State<Channel> {
       child: Column(
         children: [
           Container(
-            padding: const EdgeInsets.only(top: 10, left: 10, right: 10),
+            padding: const EdgeInsets.only(left: 10, right: 10),
             height: 75,
             decoration: const BoxDecoration(
               //color: Colors.amber,

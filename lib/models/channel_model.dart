@@ -1,14 +1,14 @@
 class CanalModel {
-  final String key;
-  final String? email;
+  final String? key;
   final String? name;
-  final String? description;
-  final String? photoURL;
+  final String? fechaCreacion;
+  final String? descripcion;
+  final String? creador;
 
   CanalModel(
-      {required this.key,
-      this.email,
+      {this.key,
       this.name,
-      this.photoURL,
-      this.description});
+      this.fechaCreacion,
+      this.descripcion,
+      this.creador});
 }

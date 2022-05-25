@@ -128,11 +128,15 @@ class _SignUpState extends State<SignUp> {
                           color2: const Color(0xFF1cbb78),
                           ancho: 100,
                           onPressed: () async {
+                            //bool cuentaCreada = false;
                             if (_keyForm.currentState!.validate()) {
                               await authService.createUserWithEmailAndPassword(
                                   context,
                                   correoController.text,
                                   contrasenaController.text);
+
+                              correoController.clear();
+                              contrasenaController.clear();
                             }
                           },
                         )

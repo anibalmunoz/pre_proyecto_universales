@@ -4,6 +4,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 import 'package:pre_proyecto_universales/models/user_model.dart';
 import 'package:flutter_facebook_auth/flutter_facebook_auth.dart';
+import 'package:pre_proyecto_universales/repository/chat_service.dart';
 import 'package:twitter_login/twitter_login.dart';
 
 class AuthService {
@@ -48,15 +49,19 @@ class AuthService {
     }
   }
 
-  Future<UsuarioModel?> createUserWithEmailAndPassword(
+  Future createUserWithEmailAndPassword(
       context, String email, String password) async {
     try {
       final credential = await _firebaseAuth.createUserWithEmailAndPassword(
           email: email, password: password);
-      return _userFromFirebase(credential.user);
+      Navigator.pop(context);
+      _userFromFirebase(credential.user);
+      await ChatService.shared.crearORegistrarCanalGeneral(getUsuario());
+      // await mostrarFlushbar(context, 'Cuenta creada correctamente',
+      //     '¡Disfruta de nuestra app de chats desde ya!');
     } on FirebaseAuthException catch (e) {
       print(e.code);
-      mostrarFlushbarCorreoYaUtilizado(context, 'Correo actualmente en uso',
+      mostrarFlushbar(context, 'Correo actualmente en uso',
           'Por favor utiliza otro correo');
     }
   }
@@ -92,6 +97,7 @@ class AuthService {
       );
 
       await _firebaseAuth.signInWithCredential(credential);
+      await ChatService.shared.crearORegistrarCanalGeneral(getUsuario());
     } catch (e) {
       print(e.toString());
     }
@@ -109,7 +115,8 @@ class AuthService {
         final OAuthCredential facebookAuthCredential =
             FacebookAuthProvider.credential(loginResult.accessToken!.token);
 
-        return _firebaseAuth.signInWithCredential(facebookAuthCredential);
+        await _firebaseAuth.signInWithCredential(facebookAuthCredential);
+        await ChatService.shared.crearORegistrarCanalGeneral(getUsuario());
       }
     } on FirebaseAuthException catch (e) {
       print(e);
@@ -129,8 +136,8 @@ class AuthService {
         (value) async {
           final twitterAuthCredential = TwitterAuthProvider.credential(
               accessToken: value.authToken!, secret: value.authTokenSecret!);
-
           await _firebaseAuth.signInWithCredential(twitterAuthCredential);
+          await ChatService.shared.crearORegistrarCanalGeneral(getUsuario());
         },
       );
     } on FirebaseAuthException catch (e) {
@@ -139,9 +146,8 @@ class AuthService {
   }
 
 /* */
-  mostrarFlushbarCorreoYaUtilizado(
-      context, String title, String message) async {
-    Flushbar(
+  mostrarFlushbar(context, String title, String message) async {
+    await Flushbar(
       title: title,
       message: message,
       duration: const Duration(seconds: 3),
