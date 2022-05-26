@@ -44,6 +44,7 @@ class MessagesWidget extends StatelessWidget {
           case ConnectionState.done:
             if (snapshot.hasData) {
               Map<dynamic, dynamic> mensajes = {};
+
               if (snapshot.data.snapshot.value != null) {
                 mensajes = snapshot.data.snapshot.value;
               }

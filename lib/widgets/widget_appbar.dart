@@ -22,45 +22,41 @@ PreferredSizeWidget getCustomAppbar(
                   MyApp.themeNotifier.value == ThemeMode.dark));
 
   return AppBar(
-    centerTitle: centerTitle,
-    title: Text(title ?? ""),
-    systemOverlayStyle: SystemUiOverlayStyle(
-      statusBarColor: isDark
+      centerTitle: centerTitle,
+      title: Text(title ?? ""),
+      systemOverlayStyle: SystemUiOverlayStyle(
+        statusBarColor: isDark
+            ? AppColor.shared.turquezaOscuro
+            : AppColor.shared.turquezaClaro,
+      ),
+      backgroundColor: isDark
           ? AppColor.shared.turquezaOscuro
           : AppColor.shared.turquezaClaro,
-    ),
-    backgroundColor:
-        isDark ? AppColor.shared.turquezaOscuro : AppColor.shared.turquezaClaro,
-    //elevation: elevation,
-    actions: centerTitle
-        ? showButton
-            ? [
-                Container(
-                  padding: const EdgeInsets.only(right: 10),
-                  alignment: Alignment.centerRight,
-                  // child: AddGroupButton(
-                  //   verticalPadding: 6,
-                  //   horizontalPadding: 13,
-                  //   onTap: onPressed!,
-                  //   content: contentButton,
-                  //   textStyle: AppStyle.shared.fonts.smallButtonText,
-                  // ),
-                )
-              ]
-            : null
-        : [
-            Container(
-              padding: const EdgeInsets.only(right: 15),
-              alignment: Alignment.centerRight,
-              // child: NormalButton(
-              //   verticalPadding: 10,
-              //   horizontalPadding: 15,
-              //   onTap: () {},
-              //   content:
-              //       AppLocalizations.of(context).dictionary(Strings.textRules),
-              //   textStyle: AppStyle.shared.fonts.smallButtonText,
-              // ),
-            )
-          ],
-  );
+      //elevation: elevation,
+      actions: showButton
+          ? [
+              Container(
+                padding: const EdgeInsets.only(right: 10),
+                alignment: Alignment.centerRight,
+                child: IconButton(
+                    onPressed: onPressed,
+                    icon: const Icon(Icons.delete_forever)),
+              )
+            ]
+          : null
+      // : [
+      //     Container(
+      //       padding: const EdgeInsets.only(right: 15),
+      //       alignment: Alignment.centerRight,
+      //       // child: NormalButton(
+      //       //   verticalPadding: 10,
+      //       //   horizontalPadding: 15,
+      //       //   onTap: () {},
+      //       //   content:
+      //       //       AppLocalizations.of(context).dictionary(Strings.textRules),
+      //       //   textStyle: AppStyle.shared.fonts.smallButtonText,
+      //       // ),
+      //     )
+      //   ],
+      );
 }

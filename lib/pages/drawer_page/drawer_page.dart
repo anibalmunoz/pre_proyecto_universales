@@ -26,6 +26,14 @@ class _DrawerPageState extends State<DrawerPage> {
 
   @override
   Widget build(BuildContext context) {
+    final isDark =
+        (MediaQuery.of(context).platformBrightness == Brightness.light &&
+                MyApp.themeNotifier.value == ThemeMode.dark) ||
+            ((MediaQuery.of(context).platformBrightness == Brightness.dark &&
+                    MyApp.themeNotifier.value == ThemeMode.system) ||
+                (MediaQuery.of(context).platformBrightness == Brightness.dark &&
+                    MyApp.themeNotifier.value == ThemeMode.dark));
+
     final authService = Provider.of<AuthService>(context);
     AppLocalizations localizations =
         Localizations.of<AppLocalizations>(context, AppLocalizations)!;
@@ -38,6 +46,9 @@ class _DrawerPageState extends State<DrawerPage> {
           Container(
               margin: const EdgeInsets.only(top: 30),
               child: UserInfo(user: user)),
+          Divider(
+            color: isDark ? Colors.white : Colors.black54,
+          ),
           Container(
             margin: const EdgeInsets.only(top: 100, left: 10),
             child: InkWell(

@@ -8,10 +8,8 @@ import 'package:pre_proyecto_universales/models/user_model.dart';
 import 'package:pre_proyecto_universales/pages/chat_page/chat_page.dart';
 import 'package:pre_proyecto_universales/pages/create_group/create_group.dart';
 import 'package:pre_proyecto_universales/pages/drawer_page/drawer_page.dart';
-import 'package:pre_proyecto_universales/pages/login_pages/login_form.dart';
 import 'package:pre_proyecto_universales/repository/auth_service.dart';
 import 'package:pre_proyecto_universales/repository/chat_service.dart';
-import 'package:pre_proyecto_universales/util/app_string.dart';
 import 'package:pre_proyecto_universales/widgets/widget_appbar.dart';
 import 'package:pre_proyecto_universales/widgets/widget_canal.dart';
 import 'package:pre_proyecto_universales/widgets/widget_fab.dart';
@@ -75,19 +73,11 @@ class _HomeState extends State<Home> {
                     canales.forEach((llave, valor) {
                       Map<String, dynamic> data =
                           json.decode(json.encode(valor));
+                      if (data["usuarios"] != null) {
+                        Map<String, dynamic> usuarios = data["usuarios"];
 
-                      CanalModel canal = CanalModel.fromJson(data);
-
-                      canal.key = llave;
-
-                      // print("LA LLAVE QUE ESTOY OBTENIENDO  ES  $llave");
-
-                      for (var i in Home.misCanales!) {
-                        if (i.key == llave) {
-                          if (canalesLista
-                              .where((element) => element.key == llave)
-                              .isEmpty) {
-                            //  print("LA LLAVE QUE ESTOY GUARDANDO ES  $llave");
+                        usuarios.forEach((key, value) {
+                          if (Home.user!.uid == key) {
                             canalesLista.add(
                               CanalModel(
                                   key: llave,
@@ -100,12 +90,8 @@ class _HomeState extends State<Home> {
                                   mensajes: data['mensajes']),
                             );
                           }
-                        }
+                        });
                       }
-
-                      //print("LA DATA ES:   $llave");
-
-                      //print("EL NOMBRE DE CANAL ES: " + data["nombre"]);
                     });
 
                     return buildChats();
@@ -122,107 +108,39 @@ class _HomeState extends State<Home> {
     );
   }
 
-  Widget buildChats() => ListView.builder(
-        physics: const BouncingScrollPhysics(),
-        itemCount: canalesLista.length,
-        itemBuilder: (context, index) {
-          final canal = canalesLista[index];
+  Widget buildChats() {
+    return ListView.builder(
+      physics: const BouncingScrollPhysics(),
+      itemCount: canalesLista.length,
+      itemBuilder: (context, index) {
+        final canal = canalesLista[index];
 
-          if (canalesLista.isNotEmpty) {
-            return Channel(
-              onLongPress: () {
-                consultaEliminarGrupo(context, canal);
-              },
-              titulo: canal.name!,
-              descripcion: canal.descripcion!,
-              onTap: () {
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                      builder: (context) => ChatPage(
-                            usuario: Home.user!,
-                            canalModel: CanalModel(
-                                key: canal.key,
-                                creador: canal.creador,
-                                descripcion: canal.descripcion,
-                                fechaCreacion: canal.fechaCreacion,
-                                name: canal.name,
-                                mensajes: canal.mensajes),
-                          )),
-                );
-                ChatService.shared.getMiCanales(Home.user!.uid!);
-              },
-            );
-          } else {
-            return Container();
-          }
-        },
-      );
-
-  Future consultaEliminarGrupo(context, canal) async {
-    AppLocalizations localizations =
-        Localizations.of<AppLocalizations>(context, AppLocalizations)!;
-    return await showDialog(
-        barrierDismissible: true,
-        context: context,
-        builder: (context) => AlertDialog(
-              title: Text(localizations.dictionary(Strings.textOpciones)),
-              content: Text(
-                localizations.dictionary(Strings.textQueDeseasHacer),
-              ),
-              actions: [
-                // TextButton(
-                //   child: const Text("Editar",
-                //       style: TextStyle(
-                //         color: Colors.blue,
-                //       )),
-                //   onPressed: () async {
-                //     Navigator.pop(context);
-
-                //     //openDialog(context);
-                //   },
-                // ),
-                TextButton(
-                  child: Text(
-                    localizations.dictionary(Strings.eliminar),
-                    style: const TextStyle(color: Colors.red),
-                  ),
-                  onPressed: () async {
-                    Navigator.pop(context);
-
-                    openDialog(context, canal);
-                  },
-                ),
-              ],
-            ));
-  }
-
-  Future openDialog(context, canal) {
-    AppLocalizations localizations =
-        Localizations.of<AppLocalizations>(context, AppLocalizations)!;
-    return showDialog(
-      context: context,
-      builder: (context) => AlertDialog(
-        title: Text(localizations.dictionary(Strings.seguroEliminarCanal)),
-        actions: [
-          TextButton(
-            onPressed: () {
-              Navigator.pop(context);
+        if (canalesLista.isNotEmpty) {
+          return Channel(
+            titulo: canal.name!,
+            descripcion: canal.descripcion!,
+            onTap: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                    builder: (context) => ChatPage(
+                          usuario: Home.user!,
+                          canalModel: CanalModel(
+                              key: canal.key,
+                              creador: canal.creador,
+                              descripcion: canal.descripcion,
+                              fechaCreacion: canal.fechaCreacion,
+                              name: canal.name,
+                              mensajes: canal.mensajes),
+                        )),
+              );
+              ChatService.shared.getMiCanales(Home.user!.uid!);
             },
-            child: Text(
-              localizations.dictionary(Strings.botonCancelar),
-              style: const TextStyle(color: Colors.red),
-            ),
-          ),
-          TextButton(
-            onPressed: () async {
-              ChatService.shared.eliminarCanal(canal.key!, Home.user!.uid!);
-              Navigator.pop(context);
-            },
-            child: Text(localizations.dictionary(Strings.aceptar)),
-          ),
-        ],
-      ),
+          );
+        } else {
+          return Container();
+        }
+      },
     );
   }
 }

@@ -5,6 +5,7 @@ import 'package:google_sign_in/google_sign_in.dart';
 import 'package:pre_proyecto_universales/models/user_model.dart';
 import 'package:flutter_facebook_auth/flutter_facebook_auth.dart';
 import 'package:pre_proyecto_universales/pages/home_page/home_page.dart';
+import 'package:pre_proyecto_universales/providers/fingerprint.dart';
 import 'package:pre_proyecto_universales/repository/chat_service.dart';
 import 'package:twitter_login/twitter_login.dart';
 
@@ -97,6 +98,7 @@ class AuthService {
 
       await _firebaseAuth.signInWithCredential(credential);
       await ChatService.shared.crearORegistrarCanalGeneral(getUsuario());
+      Fingerprint.suprimirSharedPreferences("null", "null");
     } catch (e) {
       print(e.toString());
     }
@@ -116,6 +118,8 @@ class AuthService {
 
         await _firebaseAuth.signInWithCredential(facebookAuthCredential);
         await ChatService.shared.crearORegistrarCanalGeneral(getUsuario());
+
+        Fingerprint.suprimirSharedPreferences("null", "null");
       }
     } on FirebaseAuthException catch (e) {
       print(e);
@@ -139,6 +143,7 @@ class AuthService {
           await ChatService.shared.crearORegistrarCanalGeneral(getUsuario());
         },
       );
+      Fingerprint.suprimirSharedPreferences("null", "null");
     } on FirebaseAuthException catch (e) {
       print(e);
     }

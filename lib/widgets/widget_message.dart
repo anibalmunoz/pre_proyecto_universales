@@ -7,6 +7,7 @@ import 'package:pre_proyecto_universales/models/message_model.dart';
 import 'package:pre_proyecto_universales/models/user_model.dart';
 import 'package:pre_proyecto_universales/repository/chat_service.dart';
 import 'package:pre_proyecto_universales/util/app_color.dart';
+import 'package:pre_proyecto_universales/util/app_string.dart';
 import 'package:pre_proyecto_universales/widgets/widget_input_text.dart';
 
 class MessageWidget extends StatelessWidget {
@@ -119,7 +120,7 @@ class MessageWidget extends StatelessWidget {
                   Text(
                     message.contenido!,
                     style: TextStyle(color: isMe ? Colors.black : Colors.white),
-                    textAlign: isMe ? TextAlign.end : TextAlign.start,
+                    textAlign: isMe ? TextAlign.start : TextAlign.start,
                   ),
                   Text(
                     DateFormat('hh:mm dd-MM-yyyy').format(message.fechaEnvio!),
@@ -133,7 +134,7 @@ class MessageWidget extends StatelessWidget {
                   Text(
                     message.contenido!,
                     style: TextStyle(color: isMe ? Colors.black : Colors.white),
-                    textAlign: isMe ? TextAlign.end : TextAlign.start,
+                    textAlign: isMe ? TextAlign.start : TextAlign.start,
                   ),
                   Text(
                     DateFormat('hh:mm dd-MM-yyyy').format(message.fechaEnvio!),
@@ -184,39 +185,41 @@ class MessageWidget extends StatelessWidget {
             ));
   }
 
-  Future openDialog(context) => showDialog(
-        context: context,
-        builder: (context) => AlertDialog(
-          // title: "Edita tu mensaje",
-          content: InputText(
-            icon: Icon(Icons.message),
-            labelText: "",
-            validator: (valor) {},
-            keyboardType: TextInputType.text,
-            controller: mensajeControler,
-          ),
-          actions: [
-            TextButton(
-              onPressed: () {
-                Navigator.pop(context);
-              },
-              child: Text(
-                "Cancelar",
-                style: TextStyle(color: Colors.red),
-              ),
-            ),
-            TextButton(
-              onPressed: () async {
-                await ChatService.shared.actualizarMensaje(
-                    mensajeControler.text,
-                    usuario.uid!,
-                    canal.key!,
-                    message.key!);
-                Navigator.pop(context);
-              },
-              child: Text("Aceptar"),
-            ),
-          ],
+  Future openDialog(context) {
+    AppLocalizations localizations =
+        Localizations.of<AppLocalizations>(context, AppLocalizations)!;
+
+    return showDialog(
+      context: context,
+      builder: (context) => AlertDialog(
+        // title: "Edita tu mensaje",
+        content: InputText(
+          icon: Icon(Icons.message),
+          labelText: "",
+          validator: (valor) {},
+          keyboardType: TextInputType.text,
+          controller: mensajeControler,
         ),
-      );
+        actions: [
+          TextButton(
+            onPressed: () {
+              Navigator.pop(context);
+            },
+            child: Text(
+              localizations.dictionary(Strings.botonCancelar),
+              style: TextStyle(color: Colors.red),
+            ),
+          ),
+          TextButton(
+            onPressed: () async {
+              await ChatService.shared.actualizarMensaje(mensajeControler.text,
+                  usuario.uid!, canal.key!, message.key!, message.fechaEnvio!);
+              Navigator.pop(context);
+            },
+            child: Text(localizations.dictionary(Strings.aceptar)),
+          ),
+        ],
+      ),
+    );
+  }
 }

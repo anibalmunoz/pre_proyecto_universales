@@ -1,10 +1,9 @@
-import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_database/firebase_database.dart';
 import 'package:pre_proyecto_universales/models/channel_model.dart';
 import 'package:pre_proyecto_universales/models/user_model.dart';
+import 'package:pre_proyecto_universales/pages/create_group/users_to_add.dart';
 import 'package:pre_proyecto_universales/pages/home_page/home_page.dart';
 import 'package:pre_proyecto_universales/pages/sign_up_page/sign_up.dart';
-import 'package:pre_proyecto_universales/widgets/widget_message.dart';
 import 'package:uuid/uuid.dart';
 
 class ChatService {
@@ -13,20 +12,12 @@ class ChatService {
 
   DatabaseReference databaseReference = FirebaseDatabase.instance.ref();
 
-  // Future guardar() async {
-  //   await databaseReference.set({"modo": "ThemeMode.light"});
-
-  //   DatabaseReference starCountRef = FirebaseDatabase.instance.ref('modo');
-  //   starCountRef.onValue.listen(
-  //     (DatabaseEvent event) {
-  //       final data = event.snapshot.value;
-  //       print("LA DATA OBTENIDA ES: ${data}");
-  //     },
-  //   );
-  // }
-
   DatabaseReference getCanales() {
     return FirebaseDatabase.instance.ref("Canales");
+  }
+
+  DatabaseReference getUsuarios() {
+    return FirebaseDatabase.instance.ref("Usuarios");
   }
 
   DatabaseReference getMisCanales(String uid) {
@@ -38,34 +29,36 @@ class ChatService {
   }
 
   getMiCanales(String uid) async {
-    //Home.misCanales = [];
     var ref = FirebaseDatabase.instance.ref();
     var snapshot = await ref.child("Usuarios/$uid/Canales").get();
     Home.misCanales = [];
     for (var item in snapshot.children) {
       dynamic mapa = item.value;
-//      if (Home.misCanales!.isEmpty) {
       Home.misCanales!.add(CanalModel(key: mapa));
-      // } else {
-      //   Home.misCanales!.add(CanalModel(key: mapa));
-
-      // Home.misCanales!.forEach((element) {
-      //   print("LA LLAVE QUE ESTA GUARDADA ES ${element.key}");
-      //   print("LA LLAVE QUE ESTA VINIENDO ES $mapa");
-      //   if (element.key != mapa) {
-      //     Home.misCanales!.add(CanalModel(key: mapa));
-      //   }
-      // });
     }
   }
 
-  Future actualizarMensaje(
-      String texto, String idUsuario, String keyCanal, String idMensaje) async {
+  getMisUsuarios(String uid, String keyCanal) async {
+    var ref = FirebaseDatabase.instance.ref();
+    var snapshot = await ref.child("Usuarios/$uid/Canales").get();
+    UsersToAdd.usuariosDeEsteCanal = [];
+    for (var item in snapshot.children) {
+      dynamic mapa = item.value;
+      print("Lo que viene en el mapa es: $mapa");
+      if (mapa == keyCanal) {
+        print("ESTE USUARIO YA ESTÁ EN EL CANAL");
+        UsersToAdd.usuariosDeEsteCanal!.add(UsuarioModel(uid: mapa));
+      }
+    }
+  }
+
+  Future actualizarMensaje(String texto, String idUsuario, String keyCanal,
+      String idMensaje, DateTime fechaEnvio) async {
     final messageData = {
       'texto': texto,
       'usuario': idUsuario,
       'type': "text",
-      'fecha_envio': DateTime.now().millisecondsSinceEpoch,
+      'fecha_envio': fechaEnvio.millisecondsSinceEpoch,
     };
 
     await FirebaseDatabase.instance
@@ -143,23 +136,6 @@ class ChatService {
     } catch (e) {
       yield misCanales;
     }
-
-    // DatabaseReference ref = FirebaseDatabase.instance.ref().child("Canales").get();
-    // ref.onValue.listen(
-    //   (DatabaseEvent event) {
-    //     final data = event.snapshot.value;
-    //     print("LA DATA OBTENIDA ES: ${data}");
-
-    //Map<String, dynamic> canales = data as Map<String, dynamic>;
-
-    //final body = json.encode(canales);
-    //print(body);
-    //for (var item in data) {}
-    //   },
-    // );
-    // List<CanalModel> canalesPrueba = [CanalModel(id: "1", name: "prueba")];
-
-    // return canalesPrueba;
   }
 
   Future<List<CanalModel>> buscarMisCanales(String? uid) async {
@@ -169,16 +145,7 @@ class ChatService {
       final snapshot = await ref.child('Usuarios').get();
       if (snapshot.exists) {
         for (var item in snapshot.children) {
-          //print(item.value);
           dynamic mapa = item.value;
-          // misCanales.add(
-          //   CanalModel(
-          //     key: snapshot.key!,
-          //     name: mapa["nombre"],
-          //     descripcion: mapa["descripcion"],
-          //   ),
-          // );
-
           for (var item in snapshot.children) {}
         }
       } else {
@@ -244,6 +211,54 @@ class ChatService {
     return message;
   }
 
+  Future<String> addNewUserToChanel(
+      String keyChannel, String nameChanel, UsuarioModel user) async {
+    String message = "Usuario agregado al canal con exito";
+    try {
+      await databaseReference
+          .child("Canales")
+          .child(keyChannel)
+          .child('usuarios')
+          .child(user.uid!)
+          .set(user.uid);
+      await databaseReference
+          .child("Usuarios")
+          .child(user.uid!)
+          .child("Canales/$keyChannel")
+          .set(keyChannel);
+    } catch (e) {
+      message = "Error al agregar el usuario al canal";
+    }
+    return message;
+  }
+
+  Future deleteUserToChannel(
+      String keyChannel, String nameChanel, UsuarioModel user) async {
+    await databaseReference
+        .child("Canales")
+        .child(keyChannel)
+        .child('usuarios')
+        .child(user.uid!)
+        .remove();
+
+    await databaseReference
+        .child("Usuarios")
+        .child(user.uid!)
+        .child("Canales")
+        .child(keyChannel)
+        .remove();
+  }
+
+  Future deleteChannelToUser(
+      String keyChannel, String nameChanel, UsuarioModel user) async {
+    await databaseReference
+        .child("Usuarios")
+        .child(user.uid!)
+        .child("Canales")
+        .child(keyChannel)
+        .remove();
+  }
+
   Future<String> addUser(UsuarioModel user) async {
     String message = "Usuario agregado con exito";
     try {
@@ -276,7 +291,6 @@ class ChatService {
           email: data['correo'],
           name: data['nombre'],
           photoURL: data['urlImage'],
-          //change: data['change'],
           canales: Map<String, dynamic>.from(data['Canales'] as dynamic),
         );
       }
@@ -314,12 +328,14 @@ class ChatService {
           id, "Bienvenido a la comunidad", usuario.uid!, "notification");
       await ChatService.shared.addUserToChanel(id, nombreCanal, usuario);
     } else {
+      await ChatService.shared.newMessage(
+          id, "Bienvenido a la comunidad", usuario.uid!, "notification");
       await ChatService.shared.addUserToChanel(id, nombreCanal, usuario);
     }
   }
 
   Future<void> eliminarCanal(String keyCanal, String idUsuario) async {
-    await eliminarCanalDeMiUsuario(idUsuario, keyCanal);
+    //await eliminarCanalDeMiUsuario(idUsuario, keyCanal);
     await FirebaseDatabase.instance
         .ref()
         .child("Canales")
