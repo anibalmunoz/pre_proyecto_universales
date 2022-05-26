@@ -1,14 +1,17 @@
 import 'dart:convert';
 
 import 'package:flutter/material.dart';
+import 'package:pre_proyecto_universales/localization/localizations.dart';
 import 'package:pre_proyecto_universales/main.dart';
 import 'package:pre_proyecto_universales/models/channel_model.dart';
 import 'package:pre_proyecto_universales/models/user_model.dart';
 import 'package:pre_proyecto_universales/pages/chat_page/chat_page.dart';
+import 'package:pre_proyecto_universales/pages/create_group/create_group.dart';
 import 'package:pre_proyecto_universales/pages/drawer_page/drawer_page.dart';
 import 'package:pre_proyecto_universales/pages/login_pages/login_form.dart';
 import 'package:pre_proyecto_universales/repository/auth_service.dart';
 import 'package:pre_proyecto_universales/repository/chat_service.dart';
+import 'package:pre_proyecto_universales/util/app_string.dart';
 import 'package:pre_proyecto_universales/widgets/widget_appbar.dart';
 import 'package:pre_proyecto_universales/widgets/widget_canal.dart';
 import 'package:pre_proyecto_universales/widgets/widget_fab.dart';
@@ -30,6 +33,9 @@ class _HomeState extends State<Home> {
   @override
   Widget build(BuildContext context) {
     final authService = Provider.of<AuthService>(context);
+    AppLocalizations localizations =
+        Localizations.of<AppLocalizations>(context, AppLocalizations)!;
+
     Home.user = authService.getUsuario();
 
     ChatService.shared.getMiCanales(Home.user!.uid!);
@@ -41,7 +47,15 @@ class _HomeState extends State<Home> {
           appBar: getCustomAppbar(context, title: 'Chat IT'),
           drawer: Drawer(child: DrawerPage()),
           floatingActionButton: FABPersonal(
-            onPressed: () {},
+            onPressed: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                    builder: (context) => CreateGroup(
+                          usuario: Home.user!,
+                        )),
+              );
+            },
           ),
           body: StreamBuilder(
             stream: ChatService.shared.getCanales().onValue,
@@ -116,6 +130,9 @@ class _HomeState extends State<Home> {
 
           if (canalesLista.isNotEmpty) {
             return Channel(
+              onLongPress: () {
+                consultaEliminarGrupo(context, canal);
+              },
               titulo: canal.name!,
               descripcion: canal.descripcion!,
               onTap: () {
@@ -141,4 +158,71 @@ class _HomeState extends State<Home> {
           }
         },
       );
+
+  Future consultaEliminarGrupo(context, canal) async {
+    AppLocalizations localizations =
+        Localizations.of<AppLocalizations>(context, AppLocalizations)!;
+    return await showDialog(
+        barrierDismissible: true,
+        context: context,
+        builder: (context) => AlertDialog(
+              title: Text(localizations.dictionary(Strings.textOpciones)),
+              content: Text(
+                localizations.dictionary(Strings.textQueDeseasHacer),
+              ),
+              actions: [
+                // TextButton(
+                //   child: const Text("Editar",
+                //       style: TextStyle(
+                //         color: Colors.blue,
+                //       )),
+                //   onPressed: () async {
+                //     Navigator.pop(context);
+
+                //     //openDialog(context);
+                //   },
+                // ),
+                TextButton(
+                  child: Text(
+                    localizations.dictionary(Strings.eliminar),
+                    style: const TextStyle(color: Colors.red),
+                  ),
+                  onPressed: () async {
+                    Navigator.pop(context);
+
+                    openDialog(context, canal);
+                  },
+                ),
+              ],
+            ));
+  }
+
+  Future openDialog(context, canal) {
+    AppLocalizations localizations =
+        Localizations.of<AppLocalizations>(context, AppLocalizations)!;
+    return showDialog(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: Text(localizations.dictionary(Strings.seguroEliminarCanal)),
+        actions: [
+          TextButton(
+            onPressed: () {
+              Navigator.pop(context);
+            },
+            child: Text(
+              localizations.dictionary(Strings.botonCancelar),
+              style: const TextStyle(color: Colors.red),
+            ),
+          ),
+          TextButton(
+            onPressed: () async {
+              ChatService.shared.eliminarCanal(canal.key!, Home.user!.uid!);
+              Navigator.pop(context);
+            },
+            child: Text(localizations.dictionary(Strings.aceptar)),
+          ),
+        ],
+      ),
+    );
+  }
 }

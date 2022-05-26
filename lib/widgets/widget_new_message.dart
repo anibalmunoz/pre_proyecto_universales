@@ -1,10 +1,12 @@
 import 'package:flutter/material.dart';
+import 'package:pre_proyecto_universales/localization/localizations.dart';
 import 'package:pre_proyecto_universales/main.dart';
 import 'package:pre_proyecto_universales/models/channel_model.dart';
 import 'package:pre_proyecto_universales/models/user_model.dart';
 import 'package:pre_proyecto_universales/repository/chat_service.dart';
 
 import 'package:pre_proyecto_universales/util/app_color.dart';
+import 'package:pre_proyecto_universales/util/app_string.dart';
 
 class NewMessage extends StatefulWidget {
   CanalModel canal;
@@ -22,6 +24,9 @@ class _NewMessageState extends State<NewMessage> {
 
   @override
   Widget build(BuildContext context) {
+    AppLocalizations localizations =
+        Localizations.of<AppLocalizations>(context, AppLocalizations)!;
+
     final isDark =
         (MediaQuery.of(context).platformBrightness == Brightness.light &&
                 MyApp.themeNotifier.value == ThemeMode.dark) ||
@@ -43,7 +48,8 @@ class _NewMessageState extends State<NewMessage> {
               decoration: InputDecoration(
                 filled: true,
                 fillColor: isDark ? Colors.black : Colors.grey[100],
-                labelText: "Escribe un nuevo mensaje",
+                labelText:
+                    localizations.dictionary(Strings.escribeNuevoMensaje),
                 border: OutlineInputBorder(
                   borderSide: const BorderSide(width: 10),
                   gapPadding: 10,

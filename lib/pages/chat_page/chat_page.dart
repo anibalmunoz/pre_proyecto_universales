@@ -27,7 +27,7 @@ class ChatPage extends StatelessWidget {
       body: SafeArea(
           child: Column(
         children: [
-          ChatHeader(name: canalModel.name!),
+          ChatHeader(canal: canalModel),
           Expanded(
             child: Container(
               padding: const EdgeInsets.all(10),
@@ -39,7 +39,10 @@ class ChatPage extends StatelessWidget {
                 ),
               ),
               child: MessagesWidget(
-                  idUser: usuario.uid!, keyCanal: canalModel.key!),
+                  canal: canalModel,
+                  usuario: usuario,
+                  idUser: usuario.uid!,
+                  keyCanal: canalModel.key!),
             ),
           ),
           NewMessage(canal: canalModel, usuario: usuario),

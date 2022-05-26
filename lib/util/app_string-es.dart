@@ -23,7 +23,7 @@ const Map<Strings, String> dictionary_es = {
           "Al menos una letra minucula\n"
           "Al menos un dígito\n"
           "Al menos 1 caracter especial",
-  Strings.textNombre: "Nombre:",
+  Strings.textNombre: "Nombre",
   Strings.textCorreo: "Correo:",
   Strings.textNoTienesCuenta: "¿No tienes cuenta?",
   Strings.textRegistrate: "Regístrate",
@@ -49,4 +49,12 @@ const Map<Strings, String> dictionary_es = {
   Strings.flushbarBloqueoLectorPermanenteMensaje:
       "El lector de huellas se bloqueó permanentemente, "
           "se desbloqueará hasta que vuelvas a iniciar tu teléfono con patron o PIN",
+  Strings.tittleCrearGrupo: "Crea un nuevo grupo",
+  Strings.textDescripcion: "Descripción",
+  Strings.textOpciones: "Opciones",
+  Strings.textQueDeseasHacer: "¿Que deseas hacer con este Canal?",
+  Strings.eliminar: "Eliminar",
+  Strings.aceptar: "Aceptar",
+  Strings.seguroEliminarCanal: "¿Estas seguro de eliminar este canal?",
+  Strings.escribeNuevoMensaje: "Escribe un nuevo mensaje",
 };

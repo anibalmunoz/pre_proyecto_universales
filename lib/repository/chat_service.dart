@@ -41,23 +41,55 @@ class ChatService {
     //Home.misCanales = [];
     var ref = FirebaseDatabase.instance.ref();
     var snapshot = await ref.child("Usuarios/$uid/Canales").get();
+    Home.misCanales = [];
     for (var item in snapshot.children) {
       dynamic mapa = item.value;
+//      if (Home.misCanales!.isEmpty) {
+      Home.misCanales!.add(CanalModel(key: mapa));
+      // } else {
+      //   Home.misCanales!.add(CanalModel(key: mapa));
 
-      if (Home.misCanales!.isEmpty) {
-        Home.misCanales!.add(CanalModel(key: mapa));
-      } else {
-        Home.misCanales!.forEach((element) {
-          if (element.key != mapa) {
-            Home.misCanales!.add(CanalModel(key: mapa));
-          }
-        });
-      }
+      // Home.misCanales!.forEach((element) {
+      //   print("LA LLAVE QUE ESTA GUARDADA ES ${element.key}");
+      //   print("LA LLAVE QUE ESTA VINIENDO ES $mapa");
+      //   if (element.key != mapa) {
+      //     Home.misCanales!.add(CanalModel(key: mapa));
+      //   }
+      // });
     }
+  }
+
+  Future actualizarMensaje(
+      String texto, String idUsuario, String keyCanal, String idMensaje) async {
+    final messageData = {
+      'texto': texto,
+      'usuario': idUsuario,
+      'type': "text",
+      'fecha_envio': DateTime.now().millisecondsSinceEpoch,
+    };
+
+    await FirebaseDatabase.instance
+        .ref()
+        .child("Canales")
+        .child(keyCanal)
+        .child("mensajes")
+        .child(idMensaje)
+        .update(messageData);
+  }
+
+  Future eliminarMensaje(String keyCanal, String idMensaje) async {
+    await FirebaseDatabase.instance
+        .ref()
+        .child("Canales")
+        .child(keyCanal)
+        .child("mensajes")
+        .child(idMensaje)
+        .remove();
   }
 
   Future buscarUsuario(uid) async {
     String nombre = "Desconocido";
+    String foto = "";
     var ref = FirebaseDatabase.instance.ref();
     var snapshot = await ref.child("Usuarios/$uid").get();
     //print(snapshot.value);
@@ -69,6 +101,23 @@ class ChatService {
     }
 
     return nombre;
+  }
+
+  Future buscarUsuario2(uid) async {
+    String nombre = "Desconocido";
+    UsuarioModel usuario = UsuarioModel();
+    var ref = FirebaseDatabase.instance.ref();
+    var snapshot = await ref.child("Usuarios").get();
+    //print(snapshot.value);
+    for (var item in snapshot.children) {
+      if (item.key == uid) {
+        dynamic mapa = item.value;
+        nombre = mapa["nombre"];
+        usuario = UsuarioModel(
+            uid: item.key, name: mapa["nombre"], photoURL: mapa["urlImage"]);
+      }
+    }
+    return usuario;
   }
 
   Stream<List<CanalModel>> get buscarCanales async* {
@@ -162,7 +211,7 @@ class ChatService {
         chanel.set({
           'nombre': chanelName,
           'descripcion': description,
-          'fecha_creación': DateTime.now().millisecondsSinceEpoch,
+          'fecha_creacion': DateTime.now().millisecondsSinceEpoch,
           'creador': usuario.uid,
           'administradores': {usuario.uid: usuario.uid},
           'usuarios': {usuario.uid: usuario.uid},
@@ -174,21 +223,21 @@ class ChatService {
   }
 
   Future<String> addUserToChanel(
-      String chanel, String nameChanel, UsuarioModel user) async {
+      String keyChannel, String nameChanel, UsuarioModel user) async {
     String message = "Usuario agregado al canal con exito";
     try {
       await addUser(user);
       await databaseReference
           .child("Canales")
-          .child(chanel)
+          .child(keyChannel)
           .child('usuarios')
           .child(user.uid!)
           .set(user.uid);
       await databaseReference
           .child("Usuarios")
           .child(user.uid!)
-          .child("Canales/$chanel")
-          .set(nameChanel);
+          .child("Canales/$keyChannel")
+          .set(keyChannel);
     } catch (e) {
       message = "Error al agregar el usuario al canal";
     }
@@ -251,5 +300,41 @@ class ChatService {
         .child('mensajes')
         .child(id)
         .set(messageData);
+  }
+
+  Future<void> crearNuevoGrupo(
+      String nombreCanal, String descripcion, UsuarioModel usuario) async {
+    Uuid uuid = const Uuid();
+    final id = uuid.v4();
+
+    bool create = await ChatService.shared
+        .newChanel(id, nombreCanal, descripcion, usuario);
+    if (create) {
+      await ChatService.shared.newMessage(
+          id, "Bienvenido a la comunidad", usuario.uid!, "notification");
+      await ChatService.shared.addUserToChanel(id, nombreCanal, usuario);
+    } else {
+      await ChatService.shared.addUserToChanel(id, nombreCanal, usuario);
+    }
+  }
+
+  Future<void> eliminarCanal(String keyCanal, String idUsuario) async {
+    await eliminarCanalDeMiUsuario(idUsuario, keyCanal);
+    await FirebaseDatabase.instance
+        .ref()
+        .child("Canales")
+        .child(keyCanal)
+        .remove();
+  }
+
+  Future<void> eliminarCanalDeMiUsuario(
+      String idUsuario, String keyCanal) async {
+    await FirebaseDatabase.instance
+        .ref()
+        .child("Usuarios")
+        .child(idUsuario)
+        .child("Canales")
+        .child(keyCanal)
+        .remove();
   }
 }

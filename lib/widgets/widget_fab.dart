@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:pre_proyecto_universales/main.dart';
 import 'package:pre_proyecto_universales/util/app_color.dart';
 
@@ -22,7 +23,7 @@ class FABPersonal extends StatelessWidget {
           : AppColor.shared.turquezaClaro,
       onPressed: onPressed,
       child: const Icon(
-        Icons.message,
+        FontAwesomeIcons.message,
         color: Colors.white,
       ),
     );

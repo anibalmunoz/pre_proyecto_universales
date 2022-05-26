@@ -35,5 +35,13 @@ enum Strings {
   flushbarBloqueoLectorTemporalTitulo,
   flushbarBloqueoLectorTemporalMensaje,
   flushbarBloqueoLectorPermanenteTitulo,
-  flushbarBloqueoLectorPermanenteMensaje
+  flushbarBloqueoLectorPermanenteMensaje,
+  tittleCrearGrupo,
+  textDescripcion,
+  textOpciones,
+  textQueDeseasHacer,
+  eliminar,
+  aceptar,
+  seguroEliminarCanal,
+  escribeNuevoMensaje,
 }

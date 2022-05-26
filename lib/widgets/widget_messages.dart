@@ -2,7 +2,9 @@ import 'dart:convert';
 
 import 'package:flutter/material.dart';
 import 'package:pre_proyecto_universales/main.dart';
+import 'package:pre_proyecto_universales/models/channel_model.dart';
 import 'package:pre_proyecto_universales/models/message_model.dart';
+import 'package:pre_proyecto_universales/models/user_model.dart';
 import 'package:pre_proyecto_universales/pages/home_page/home_page.dart';
 import 'package:pre_proyecto_universales/repository/chat_service.dart';
 import 'package:pre_proyecto_universales/widgets/widget_message.dart';
@@ -10,7 +12,14 @@ import 'package:pre_proyecto_universales/widgets/widget_message.dart';
 class MessagesWidget extends StatelessWidget {
   final String idUser;
   final String keyCanal;
-  MessagesWidget({Key? key, required this.idUser, required this.keyCanal})
+  final CanalModel canal;
+  final UsuarioModel usuario;
+  MessagesWidget(
+      {Key? key,
+      required this.idUser,
+      required this.keyCanal,
+      required this.canal,
+      required this.usuario})
       : super(key: key);
   List<MessageModel> mensajesLista = [];
 
@@ -34,7 +43,10 @@ class MessagesWidget extends StatelessWidget {
 
           case ConnectionState.done:
             if (snapshot.hasData) {
-              Map<dynamic, dynamic> mensajes = snapshot.data.snapshot.value;
+              Map<dynamic, dynamic> mensajes = {};
+              if (snapshot.data.snapshot.value != null) {
+                mensajes = snapshot.data.snapshot.value;
+              }
 
               mensajesLista = [];
 
@@ -46,8 +58,10 @@ class MessagesWidget extends StatelessWidget {
                 //canal.key = llave;
 
                 //for (var i in mensajesLista) {
+
                 mensajesLista.add(
                   MessageModel(
+                    key: llave,
                     idUser: data["usuario"],
                     contenido: data["texto"],
                     tipo: data["type"],
@@ -84,6 +98,8 @@ class MessagesWidget extends StatelessWidget {
       itemBuilder: (context, index) {
         final mensaje = mensajesLista[index];
         return MessageWidget(
+          canal: canal,
+          usuario: usuario,
           message: mensaje,
           isMe: mensaje.idUser == idUser,
         );

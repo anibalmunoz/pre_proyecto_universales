@@ -57,7 +57,8 @@ class _SignUpState extends State<SignUp> {
                           height: 20.0,
                         ),
                         InputText(
-                          labelText: "Nombre",
+                          labelText:
+                              localizations.dictionary(Strings.textNombre),
                           icon: const Icon(FontAwesomeIcons.person),
                           keyboardType: TextInputType.emailAddress,
                           controller: nombreController,

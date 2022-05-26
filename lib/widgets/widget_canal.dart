@@ -3,12 +3,14 @@ import 'package:flutter/material.dart';
 class Channel extends StatefulWidget {
   String titulo;
   VoidCallback? onTap;
+  VoidCallback? onLongPress;
   String descripcion;
   Channel({
     Key? key,
     required this.titulo,
     this.onTap,
     required this.descripcion,
+    this.onLongPress,
   }) : super(key: key);
 
   @override
@@ -19,6 +21,7 @@ class _ChannelState extends State<Channel> {
   @override
   Widget build(BuildContext context) {
     return InkWell(
+      onLongPress: widget.onLongPress,
       onTap: widget.onTap,
       child: Column(
         children: [

@@ -22,7 +22,7 @@ const Map<Strings, String> dictionary_en = {
           "At least one lowercase letter\n"
           "At least one digit\n"
           "At least 1 special character",
-  Strings.textNombre: "Name:",
+  Strings.textNombre: "Name",
   Strings.textCorreo: "Email:",
   Strings.textNoTienesCuenta: "You do not have an account?",
   Strings.textRegistrate: "Sign up",
@@ -48,4 +48,12 @@ const Map<Strings, String> dictionary_en = {
   Strings.flushbarBloqueoLectorPermanenteMensaje:
       "The fingerprint reader is permanently blocked, "
           "it will be unlocked until you reboot your phone with pattern or PIN",
+  Strings.tittleCrearGrupo: "Create a new group",
+  Strings.textDescripcion: "Description",
+  Strings.textOpciones: "Options",
+  Strings.textQueDeseasHacer: "What do you want to do with this Channel?",
+  Strings.eliminar: "Delete",
+  Strings.aceptar: "Accept",
+  Strings.seguroEliminarCanal: "Are you sure you want to delete this channel?",
+  Strings.escribeNuevoMensaje: "Write a new message",
 };
