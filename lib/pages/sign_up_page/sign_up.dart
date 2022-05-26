@@ -1,6 +1,7 @@
 import 'package:another_flushbar/flushbar.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:pre_proyecto_universales/bloc/global_bloc.dart';
 import 'package:pre_proyecto_universales/localization/localizations.dart';
 import 'package:pre_proyecto_universales/main.dart';
@@ -14,6 +15,7 @@ import 'package:pre_proyecto_universales/util/extension.dart';
 
 class SignUp extends StatefulWidget {
   SignUp({Key? key}) : super(key: key);
+  static String nombre = "";
   @override
   State<SignUp> createState() => _SignUpState();
 }
@@ -24,6 +26,7 @@ class _SignUpState extends State<SignUp> {
   var correoController = TextEditingController();
   var contrasenaController = TextEditingController();
   var validarContrasenaController = TextEditingController();
+  var nombreController = TextEditingController();
 
   @override
   Widget build(BuildContext context) {
@@ -52,6 +55,24 @@ class _SignUpState extends State<SignUp> {
                       children: [
                         const SizedBox(
                           height: 20.0,
+                        ),
+                        InputText(
+                          labelText: "Nombre",
+                          icon: const Icon(FontAwesomeIcons.person),
+                          keyboardType: TextInputType.emailAddress,
+                          controller: nombreController,
+                          validator: (valor) {
+                            if (valor!.isEmpty) {
+                              return localizations
+                                  .dictionary(Strings.textCampoVacio);
+                            }
+
+                            return null;
+                          },
+                        ),
+                        Container(
+                          margin:
+                              const EdgeInsets.only(top: 15.0, bottom: 15.0),
                         ),
                         InputText(
                           labelText: localizations
@@ -130,6 +151,8 @@ class _SignUpState extends State<SignUp> {
                           onPressed: () async {
                             //bool cuentaCreada = false;
                             if (_keyForm.currentState!.validate()) {
+                              SignUp.nombre = nombreController.text;
+
                               await authService.createUserWithEmailAndPassword(
                                   context,
                                   correoController.text,

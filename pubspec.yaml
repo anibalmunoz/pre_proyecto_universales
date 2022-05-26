@@ -51,6 +51,8 @@ dependencies:
   flutter_facebook_auth: ^4.3.4
   twitter_login: ^4.2.3
   local_auth: ^2.1.0
+  uuid: ^3.0.6
+  intl: ^0.17.0
   
 
 dev_dependencies:

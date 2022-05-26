@@ -29,7 +29,7 @@ class UserInfo extends StatelessWidget {
           shape: BoxShape.circle,
           image: DecorationImage(
             fit: BoxFit.cover, //image: AssetImage(user.fotoURL)
-            image: user.photoURL != null
+            image: user.photoURL != null && user.photoURL != ""
                 ? NetworkImage(user.photoURL!)
                 : const NetworkImage(
                     'https://upload.wikimedia.org/wikipedia/commons/thumb/c/ce/Oxygen480-places-user-identity.svg/1200px-Oxygen480-places-user-identity.svg.png'),
@@ -52,7 +52,7 @@ class UserInfo extends StatelessWidget {
                         fontFamily: 'Lato',
                       ),
                     )
-                  : const Text(''),
+                  : const Text('SIN NOMBRE'),
             ),
           ],
         ),

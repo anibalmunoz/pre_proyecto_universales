@@ -4,6 +4,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 import 'package:pre_proyecto_universales/models/user_model.dart';
 import 'package:flutter_facebook_auth/flutter_facebook_auth.dart';
+import 'package:pre_proyecto_universales/pages/home_page/home_page.dart';
 import 'package:pre_proyecto_universales/repository/chat_service.dart';
 import 'package:twitter_login/twitter_login.dart';
 
@@ -27,14 +28,12 @@ class AuthService {
 
   UsuarioModel getUsuario() {
     final User? user = _firebaseAuth.currentUser;
-    // if (user != null) {
-    print(user!.photoURL);
-
+    //print(user!);
     return UsuarioModel(
-      uid: user.uid,
-      email: user.email,
-      name: user.displayName,
-      photoURL: user.photoURL,
+      uid: user!.uid,
+      email: user.email ?? "",
+      name: user.displayName ?? "",
+      photoURL: user.photoURL ?? "",
     );
   }
 

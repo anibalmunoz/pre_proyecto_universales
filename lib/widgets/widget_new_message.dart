@@ -1,9 +1,16 @@
 import 'package:flutter/material.dart';
 import 'package:pre_proyecto_universales/main.dart';
+import 'package:pre_proyecto_universales/models/channel_model.dart';
+import 'package:pre_proyecto_universales/models/user_model.dart';
+import 'package:pre_proyecto_universales/repository/chat_service.dart';
+
 import 'package:pre_proyecto_universales/util/app_color.dart';
 
 class NewMessage extends StatefulWidget {
-  NewMessage({Key? key}) : super(key: key);
+  CanalModel canal;
+  UsuarioModel usuario;
+  NewMessage({Key? key, required this.canal, required this.usuario})
+      : super(key: key);
 
   @override
   State<NewMessage> createState() => _NewMessageState();
@@ -72,6 +79,9 @@ class _NewMessageState extends State<NewMessage> {
   void sendMessage() async {
     FocusScope.of(context).unfocus();
     //await FirebaseApi.uploadMessage(widget.idUser, message);
+
+    await ChatService.shared
+        .newMessage(widget.canal.key!, message!, widget.usuario.uid!, "text");
     _controller.clear();
   }
 }

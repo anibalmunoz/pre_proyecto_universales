@@ -1,12 +1,16 @@
 import 'package:flutter/material.dart';
 import 'package:pre_proyecto_universales/main.dart';
+import 'package:pre_proyecto_universales/models/channel_model.dart';
+import 'package:pre_proyecto_universales/models/user_model.dart';
 import 'package:pre_proyecto_universales/widgets/widget_chat_header.dart';
 import 'package:pre_proyecto_universales/widgets/widget_messages.dart';
 import 'package:pre_proyecto_universales/widgets/widget_new_message.dart';
 
 class ChatPage extends StatelessWidget {
-  final String titulo;
-  const ChatPage({Key? key, required this.titulo}) : super(key: key);
+  final CanalModel canalModel;
+  final UsuarioModel usuario;
+  const ChatPage({Key? key, required this.canalModel, required this.usuario})
+      : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -23,7 +27,7 @@ class ChatPage extends StatelessWidget {
       body: SafeArea(
           child: Column(
         children: [
-          ChatHeader(name: titulo),
+          ChatHeader(name: canalModel.name!),
           Expanded(
             child: Container(
               padding: const EdgeInsets.all(10),
@@ -34,10 +38,11 @@ class ChatPage extends StatelessWidget {
                   topRight: Radius.circular(15),
                 ),
               ),
-              child: const MessagesWidget(idUser: ''),
+              child: MessagesWidget(
+                  idUser: usuario.uid!, keyCanal: canalModel.key!),
             ),
           ),
-          NewMessage(),
+          NewMessage(canal: canalModel, usuario: usuario),
         ],
       )),
     );

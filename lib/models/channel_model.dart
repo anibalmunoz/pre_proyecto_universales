@@ -1,16 +1,18 @@
 class CanalModel {
   String? key;
   String? name;
-  String? fechaCreacion;
+  DateTime? fechaCreacion;
   String? descripcion;
   String? creador;
+  Map<String, dynamic>? mensajes;
 
   CanalModel(
       {this.key,
       this.name,
       this.fechaCreacion,
       this.descripcion,
-      this.creador});
+      this.creador,
+      this.mensajes});
 
   CanalModel.fromJson(Map<String, dynamic> json)
       : key = json['key'] ?? "",

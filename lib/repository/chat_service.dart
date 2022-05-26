@@ -1,6 +1,11 @@
+import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_database/firebase_database.dart';
 import 'package:pre_proyecto_universales/models/channel_model.dart';
 import 'package:pre_proyecto_universales/models/user_model.dart';
+import 'package:pre_proyecto_universales/pages/home_page/home_page.dart';
+import 'package:pre_proyecto_universales/pages/sign_up_page/sign_up.dart';
+import 'package:pre_proyecto_universales/widgets/widget_message.dart';
+import 'package:uuid/uuid.dart';
 
 class ChatService {
   ChatService._privateConstructor();
@@ -22,6 +27,48 @@ class ChatService {
 
   DatabaseReference getCanales() {
     return FirebaseDatabase.instance.ref("Canales");
+  }
+
+  DatabaseReference getMisCanales(String uid) {
+    return FirebaseDatabase.instance.ref("Canales/$uid");
+  }
+
+  DatabaseReference getMensajes(String key) {
+    return FirebaseDatabase.instance.ref("Canales/$key/mensajes");
+  }
+
+  getMiCanales(String uid) async {
+    //Home.misCanales = [];
+    var ref = FirebaseDatabase.instance.ref();
+    var snapshot = await ref.child("Usuarios/$uid/Canales").get();
+    for (var item in snapshot.children) {
+      dynamic mapa = item.value;
+
+      if (Home.misCanales!.isEmpty) {
+        Home.misCanales!.add(CanalModel(key: mapa));
+      } else {
+        Home.misCanales!.forEach((element) {
+          if (element.key != mapa) {
+            Home.misCanales!.add(CanalModel(key: mapa));
+          }
+        });
+      }
+    }
+  }
+
+  Future buscarUsuario(uid) async {
+    String nombre = "Desconocido";
+    var ref = FirebaseDatabase.instance.ref();
+    var snapshot = await ref.child("Usuarios/$uid").get();
+    //print(snapshot.value);
+    for (var item in snapshot.children) {
+      if (item.key == "nombre") {
+        nombre = item.value.toString();
+        //print(nombre);
+      }
+    }
+
+    return nombre;
   }
 
   Stream<List<CanalModel>> get buscarCanales async* {
@@ -73,7 +120,7 @@ class ChatService {
       final snapshot = await ref.child('Usuarios').get();
       if (snapshot.exists) {
         for (var item in snapshot.children) {
-          print(item.value);
+          //print(item.value);
           dynamic mapa = item.value;
           // misCanales.add(
           //   CanalModel(
@@ -155,7 +202,7 @@ class ChatService {
       await userF.get().then((value) {
         if (value.value == null) {
           userF.set({
-            'nombre': user.name,
+            'nombre': user.name == "" ? SignUp.nombre : user.name,
             'correo': user.email,
             'urlImage': '',
             'estado': true,
@@ -167,25 +214,6 @@ class ChatService {
       message = "Error al agregar el usuario";
     }
     return message;
-  }
-
-  Future<void> newMessage(
-      String chanel, String message, String userId, String type) async {
-    // Uuid uuid = const Uuid();
-    // final id = uuid.v4();
-    final messageData = {
-      'texto': message,
-      'usuario': userId,
-      'type': type,
-      'fecha_envio': DateTime.now().millisecondsSinceEpoch,
-    };
-    await databaseReference
-        .child("Canales")
-        .child(chanel)
-        .child('mensajes')
-        .child(userId)
-        //.child(id)
-        .set(messageData);
   }
 
   Future<UsuarioModel> getUser(String id) async {
@@ -205,5 +233,23 @@ class ChatService {
       }
     });
     return retorno;
+  }
+
+  Future<void> newMessage(
+      String chanel, String message, String userId, String type) async {
+    Uuid uuid = const Uuid();
+    final id = uuid.v4();
+    final messageData = {
+      'texto': message,
+      'usuario': userId,
+      'type': type,
+      'fecha_envio': DateTime.now().millisecondsSinceEpoch,
+    };
+    await databaseReference
+        .child("Canales")
+        .child(chanel)
+        .child('mensajes')
+        .child(id)
+        .set(messageData);
   }
 }
